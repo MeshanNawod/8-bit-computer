@@ -68,6 +68,42 @@
     width: 100%; font: inherit; padding: 8px 10px; margin-top: 4px;
     border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--text);
   }
+  /* charts */
+  :root { --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --grid: #e7e5df; --axis: #8a8983;
+          --board: #f1f4ee; --copper: #c98a3a; --silk: #3a3a37; --air: #6250d6; }
+  @media (prefers-color-scheme: dark) {
+    :root { --s1: #3987e5; --s2: #d95926; --s3: #199e70; --grid: #2e2d2a; --axis: #77766f;
+            --board: #182019; --copper: #d39a4f; --silk: #d8d7d0; --air: #9085e9; }
+  }
+  figure.chart { margin: 20px 0 6px; }
+  figcaption { font-size: .92rem; color: var(--muted); margin-bottom: 8px; }
+  figcaption b { display: block; color: var(--text); font-size: 1rem; }
+  .viz { position: relative; }
+  .viz svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .viz text { fill: var(--muted); font-size: 12px; font-family: inherit; }
+  .viz .lbl { font-weight: 600; fill: var(--text); }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: .88rem; color: var(--muted); margin: 0 0 6px; }
+  .legend i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+  .tip {
+    position: absolute; pointer-events: none; background: var(--card); color: var(--text);
+    border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; font-size: .85rem;
+    box-shadow: 0 4px 14px rgba(0,0,0,.12); white-space: nowrap; display: none; z-index: 3;
+  }
+  .tip i { display: inline-block; width: 10px; height: 3px; border-radius: 2px; margin-right: 6px; vertical-align: middle; }
+  /* pcb */
+  .pcb-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .pcb-tabs button {
+    font: inherit; font-size: .9rem; padding: 6px 12px; border-radius: 99px; cursor: pointer;
+    border: 1px solid var(--line); background: var(--bg); color: var(--text);
+  }
+  .pcb-tabs button[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .pcb { position: relative; background: var(--board); border-radius: 8px; border: 1px solid var(--line); }
+  .pcb svg { width: 100%; height: auto; display: block; }
+  .pcb .part:hover .body { stroke: var(--accent); stroke-width: .35; }
+  .pcb text { font-family: inherit; fill: var(--silk); }
+  .pcb-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: .85rem; color: var(--muted); margin: 10px 0 14px; }
+  .pcb-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -2px; margin-right: 6px; }
+  .pcb-legend i.dash { height: 0; border-top: 2px dashed var(--air); border-radius: 0; width: 18px; vertical-align: middle; }
   footer { margin: 64px 0 40px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: .9rem; }
 </style>
 </head>
@@ -87,6 +123,7 @@
   <a href="#how">How it works</a>
   <a href="#progress">Progress</a>
   <a href="#clock">Clock module</a>
+  <a href="#pcb">PCB view</a>
   <a href="#calc">555 calculator</a>
   <a href="#basics">Basics</a>
   <a href="#links">Files</a>
@@ -139,6 +176,10 @@
       <div><b>69 ms</b><span>off time</span></div>
       <div><b>50.2 %</b><span>duty cycle</span></div>
     </div>
+    <figure class="chart">
+      <figcaption><b>Capacitor and output voltage over time</b> The capacitor (blue) charges to ⅔ VCC and discharges to ⅓ VCC. Each turn flips the output (orange).</figcaption>
+      <div id="chartAstable"></div>
+    </figure>
     <p><a href="https://www.tinkercad.com/things/l30rW27OBnZ-astable-555-timer-8-bit-computer-clock-part-1-a">Open in Tinkercad</a> · <a href="https://github.com/MeshanNawod/8-bit-computer/blob/main/docs/clock/01-astable.md">Full write-up</a></p>
   </div>
 
@@ -153,6 +194,10 @@
       <tr><td>10 %</td><td>101 kΩ</td><td>7.1 Hz</td></tr>
       <tr><td>Zero</td><td>1 kΩ</td><td><strong>480 Hz</strong> (fast)</td></tr>
     </table></div>
+    <figure class="chart">
+      <figcaption><b>Clock speed vs knob position</b> Frequency on a log scale. Most of the speed range sits in the first few percent of the knob's travel.</figcaption>
+      <div id="chartPot"></div>
+    </figure>
     <p style="margin-top:12px"><a href="https://www.tinkercad.com/things/5Rx0vSOaq2a-astable-555-timer-8-bit-computer-clock-part-1b-">Open in Tinkercad</a> · <a href="https://github.com/MeshanNawod/8-bit-computer/blob/main/docs/clock/01-astable.md#part-1b-adjustable-speed">Full write-up</a></p>
   </div>
 
@@ -167,6 +212,10 @@
       <div><b>≈ 10 ms</b><span>typical bounce</span></div>
       <div><b>1</b><span>pulse per press</span></div>
     </div>
+    <figure class="chart">
+      <figcaption><b>One bouncy button press</b> The button (aqua) bounces several times, but the output (orange) gives one clean 110 ms pulse. It ends when the capacitor (blue) reaches ⅔ VCC.</figcaption>
+      <div id="chartMono"></div>
+    </figure>
     <p><a href="https://www.tinkercad.com/things/hLZbnoHB4L6-monostable-555-timer-8-bit-computer-clock-part-2">Open in Tinkercad</a> · <a href="https://github.com/MeshanNawod/8-bit-computer/blob/main/docs/clock/02-monostable.md">Full write-up</a></p>
   </div>
 
@@ -186,6 +235,22 @@
     </ol>
     <div class="formula">CLK = (AUTO · not SEL + MANUAL · SEL) · not HLT</div>
     <p><a href="https://github.com/MeshanNawod/8-bit-computer/blob/main/docs/clock/04-clock-logic.md">Read the plan</a></p>
+  </div>
+</section>
+
+<section id="pcb">
+  <h2>PCB view</h2>
+  <p>Board layouts read live from my Tinkercad Eagle exports (<code>.brd</code>). Copper pads, silkscreen outlines and the unrouted connections (airwires) between parts are drawn straight from the file. Hover a part to see its value.</p>
+  <div class="card">
+    <div class="pcb-tabs" id="pcbTabs" role="tablist"></div>
+    <div id="pcbView" class="pcb"></div>
+    <div class="pcb-legend">
+      <span><i style="background:var(--copper)"></i>Copper pads</span>
+      <span><i style="background:var(--silk)"></i>Silkscreen</span>
+      <span><i class="dash"></i>Airwires (connections)</span>
+    </div>
+    <div class="scroll"><table id="pcbParts"></table></div>
+    <p style="margin-top:12px"><a id="pcbDownload" href="#">Download this .brd file</a> (opens in Autodesk Eagle or Fusion 360 Electronics)</p>
   </div>
 </section>
 
@@ -265,5 +330,6 @@
   ['r1', 'r2', 'c'].forEach(id => $(id).addEventListener('input', calc));
   calc();
 </script>
+<script src="site.js"></script>
 </body>
 </html>
