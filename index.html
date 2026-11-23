@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>8-Bit Breadboard Computer</title>
+<meta name="description" content="An 8-bit computer built from logic chips, 555 timers and transistors, explained step by step with calculations. Based on Ben Eater's design.">
+<style>
+  :root {
+    --bg: #fafaf7; --card: #ffffff; --text: #1d1d1b; --muted: #5f5f5a;
+    --line: #e4e2dc; --accent: #c2410c; --accent-soft: #fff1e8;
+    --code: #f3f2ee; --done: #15803d; --next: #a16207;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141413; --card: #1d1d1b; --text: #ecebe6; --muted: #a3a29c;
+      --line: #33322f; --accent: #fb923c; --accent-soft: #2b1d14;
+      --code: #262624; --done: #4ade80; --next: #facc15;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 17px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 16px; }
+  header { padding: 56px 0 24px; }
+  h1 { font-size: clamp(2rem, 6vw, 2.8rem); line-height: 1.15; margin: 0 0 12px; }
+  h2 { font-size: 1.6rem; margin: 56px 0 8px; }
+  h3 { font-size: 1.2rem; margin: 0 0 6px; }
+  p { margin: 0 0 14px; }
+  .lead { font-size: 1.15rem; color: var(--muted); max-width: 640px; }
+  a { color: var(--accent); }
+  nav {
+    position: sticky; top: 0; z-index: 5; background: var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
+  nav .wrap { display: flex; gap: 20px; overflow-x: auto; padding-top: 12px; padding-bottom: 12px; }
+  nav a { color: var(--muted); text-decoration: none; white-space: nowrap; font-size: .95rem; }
+  nav a:hover { color: var(--accent); }
+  .credit {
+    background: var(--accent-soft); border-left: 4px solid var(--accent);
+    padding: 14px 18px; border-radius: 8px; margin: 20px 0 0;
+  }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 22px; margin: 18px 0;
+  }
+  .card img { width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--line); margin: 10px 0 14px; background: #f3f4f6; }
+  .tag { display: inline-block; font-size: .8rem; font-weight: 600; padding: 2px 10px; border-radius: 99px; border: 1px solid currentColor; margin-left: 6px; vertical-align: middle; }
+  .done { color: var(--done); } .next { color: var(--next); }
+  .result { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0; }
+  .result div { background: var(--code); border-radius: 8px; padding: 8px 14px; }
+  .result b { display: block; font-size: 1.25rem; }
+  .result span { font-size: .85rem; color: var(--muted); }
+  .formula { font-family: ui-monospace, Consolas, monospace; background: var(--code); padding: 10px 14px; border-radius: 8px; overflow-x: auto; font-size: .95rem; margin: 10px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 600; }
+  .scroll { overflow-x: auto; }
+  ol.steps { padding-left: 22px; } ol.steps li { margin-bottom: 6px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+  .grid .card { margin: 0; }
+  .calc { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 10px 0 4px; }
+  label { font-size: .9rem; color: var(--muted); display: block; }
+  input, select {
+    width: 100%; font: inherit; padding: 8px 10px; margin-top: 4px;
+    border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--text);
+  }
+  footer { margin: 64px 0 40px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: .9rem; }
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <h1>8-Bit Breadboard Computer</h1>
+  <p class="lead">A computer built from logic chips, 555 timers and transistors, one module at a time. Each step is simulated in Tinkercad and explained with the maths behind it.</p>
+  <div class="credit">
+    <strong>Based on Ben Eater's 8-bit computer.</strong> The design and module breakdown are his. Watch the original series at
+    <a href="https://eater.net/8bit">eater.net/8bit</a> or on
+    <a href="https://www.youtube.com/playlist?list=PLowKtXNTBypGqImE405J2565dvjafglHU">YouTube</a>.
+  </div>
+</header>
+
+<nav><div class="wrap">
+  <a href="#how">How it works</a>
+  <a href="#progress">Progress</a>
+  <a href="#clock">Clock module</a>
+  <a href="#calc">555 calculator</a>
+  <a href="#basics">Basics</a>
+  <a href="#links">Files</a>
+</div></nav>
+
+<main class="wrap">
+
+<section id="how">
+  <h2>How the computer works</h2>
+  <p>Every part of the computer connects to one shared <strong>8-bit bus</strong>. On each tick of the clock, one module puts a number on the bus and another reads it.</p>
+  <div class="grid">
+    <div class="card"><h3>Clock</h3><p>The heartbeat. Every step happens on a clock pulse.</p></div>
+    <div class="card"><h3>Registers</h3><p>Hold numbers (A, B) and the current instruction.</p></div>
+    <div class="card"><h3>ALU</h3><p>Adds and subtracts the numbers in A and B.</p></div>
+    <div class="card"><h3>RAM</h3><p>16 bytes of memory for the program and data.</p></div>
+    <div class="card"><h3>Program counter</h3><p>Keeps track of which instruction comes next.</p></div>
+    <div class="card"><h3>Control logic</h3><p>Decides which module talks to the bus on each step.</p></div>
+  </div>
+</section>
+
+<section id="progress">
+  <h2>Progress</h2>
+  <div class="card scroll">
+    <table>
+      <tr><th>Module</th><th>Main chips</th><th>Status</th></tr>
+      <tr><td>1. Clock</td><td>555 timers, 74LS04/08/32</td><td><span class="done">● In progress</span></td></tr>
+      <tr><td>2. Registers</td><td>74LS173, 74LS245</td><td>Planned</td></tr>
+      <tr><td>3. ALU</td><td>74LS283, 74LS86</td><td>Planned</td></tr>
+      <tr><td>4. RAM</td><td>74LS189, 74LS157</td><td>Planned</td></tr>
+      <tr><td>5. Program counter</td><td>74LS161</td><td>Planned</td></tr>
+      <tr><td>6. Output display</td><td>28C16 EEPROM, 7-segment</td><td>Planned</td></tr>
+      <tr><td>7. Control logic</td><td>28C16 EEPROM ×2</td><td>Planned</td></tr>
+    </table>
+  </div>
+</section>
+
+<section id="clock">
+  <h2>Module 1: The clock</h2>
+  <p>The clock needs to do two things: <strong>run on its own</strong> at a speed you can adjust, and <strong>step once</strong> each time you press a button. Both use a 555 timer chip.</p>
+
+  <div class="card">
+    <h3>Part 1a: Astable 555 <span class="tag done">Done</span></h3>
+    <p>The 555 switches its output on and off by itself, forever. A capacitor charges through two resistors until it reaches ⅔ of the supply voltage, then discharges until it falls to ⅓, over and over.</p>
+    <img src="images/part1a-astable.png" alt="Part 1a breadboard in Tinkercad" loading="lazy">
+    <p><strong>Parts:</strong> R1 = 1 kΩ, R2 = 100 kΩ, C = 1 µF</p>
+    <div class="formula">f = 1.44 ÷ ((R1 + 2·R2) × C)<br>  = 1.44 ÷ ((1 000 + 200 000) × 0.000001)<br>  = 7.18 Hz</div>
+    <div class="result">
+      <div><b>7.18 Hz</b><span>blinks per second</span></div>
+      <div><b>70 ms</b><span>on time</span></div>
+      <div><b>69 ms</b><span>off time</span></div>
+      <div><b>50.2 %</b><span>duty cycle</span></div>
+    </div>
+    <p><a href="https://www.tinkercad.com/things/l30rW27OBnZ-astable-555-timer-8-bit-computer-clock-part-1-a">Open in Tinkercad</a> · <a href="https://github.com/MeshanNawod/8-bit-computer/blob/main/docs/clock/01-astable.md">Full write-up</a></p>
+  </div>
+
+  <div class="card">
+    <h3>Part 1b: Adjustable speed <span class="tag done">Done</span></h3>
+    <p>R2 becomes a <strong>1 kΩ resistor plus a 1 MΩ knob</strong>. Turning the knob changes how long the capacitor takes to charge, which changes the speed. The extra 1 kΩ sets a safe top speed when the knob is at zero.</p>
+    <img src="images/part1b-astable-pot.png" alt="Part 1b breadboard with potentiometer" loading="lazy">
+    <div class="scroll"><table>
+      <tr><th>Knob</th><th>R2</th><th>Speed</th></tr>
+      <tr><td>Maximum</td><td>1.001 MΩ</td><td><strong>0.72 Hz</strong> (slow, easy to watch)</td></tr>
+      <tr><td>Half</td><td>501 kΩ</td><td>1.44 Hz</td></tr>
+      <tr><td>10 %</td><td>101 kΩ</td><td>7.1 Hz</td></tr>
+      <tr><td>Zero</td><td>1 kΩ</td><td><strong>480 Hz</strong> (fast)</td></tr>
+    </table></div>
+    <p style="margin-top:12px"><a href="https://www.tinkercad.com/things/5Rx0vSOaq2a-astable-555-timer-8-bit-computer-clock-part-1b-">Open in Tinkercad</a> · <a href="https://github.com/MeshanNawod/8-bit-computer/blob/main/docs/clock/01-astable.md#part-1b-adjustable-speed">Full write-up</a></p>
+  </div>
+
+  <div class="card">
+    <h3>Part 2: Single-step button <span class="tag done">Done</span></h3>
+    <p>A push button's metal contacts <strong>bounce</strong>, so one press can look like several. The 555 in <em>monostable</em> mode fixes this: a press starts one clean pulse of fixed length, and bounces during that pulse are ignored.</p>
+    <img src="images/part2-monostable.png" alt="Part 2 breadboard with push button" loading="lazy">
+    <p><strong>Parts:</strong> R = 1 MΩ, C = 0.1 µF, 1 kΩ pull-up on the button</p>
+    <div class="formula">t = 1.1 × R × C<br>  = 1.1 × 1 000 000 × 0.0000001<br>  = 0.11 s</div>
+    <div class="result">
+      <div><b>110 ms</b><span>pulse per press</span></div>
+      <div><b>≈ 10 ms</b><span>typical bounce</span></div>
+      <div><b>1</b><span>pulse per press</span></div>
+    </div>
+    <p><a href="https://www.tinkercad.com/things/hLZbnoHB4L6-monostable-555-timer-8-bit-computer-clock-part-2">Open in Tinkercad</a> · <a href="https://github.com/MeshanNawod/8-bit-computer/blob/main/docs/clock/02-monostable.md">Full write-up</a></p>
+  </div>
+
+  <div class="card">
+    <h3>Part 3: Choosing auto or manual <span class="tag done">Done</span></h3>
+    <p>Both circuits on one board. A <strong>toggle switch</strong> picks which one drives the clock: the free-running astable (red LED) or the step button (yellow LED). A third LED shows the selected clock.</p>
+    <img src="images/part3-clock-select.png" alt="Part 3 breadboard with both 555 timers and a toggle switch" loading="lazy">
+    <p><a href="https://www.tinkercad.com/things/8pzGGpFieEt-bistable-555-timer-8-bit-computer-clock-part-3">Open in Tinkercad</a> · <a href="https://github.com/MeshanNawod/8-bit-computer/blob/main/docs/clock/03-bistable.md">Full write-up</a></p>
+  </div>
+
+  <div class="card">
+    <h3>Next: Bistable 555 and logic gates <span class="tag next">Next</span></h3>
+    <p>The toggle switch bounces too, which can add stray clock pulses. The next step adds:</p>
+    <ol class="steps">
+      <li>A third 555 in <strong>bistable</strong> mode that latches the switch position, so bounces do nothing.</li>
+      <li><strong>Logic gates</strong> (74LS04, 74LS08, 74LS32) that pick the clock source and stop it on a <code>HLT</code> instruction.</li>
+    </ol>
+    <div class="formula">CLK = (AUTO · not SEL + MANUAL · SEL) · not HLT</div>
+    <p><a href="https://github.com/MeshanNawod/8-bit-computer/blob/main/docs/clock/04-clock-logic.md">Read the plan</a></p>
+  </div>
+</section>
+
+<section id="calc">
+  <h2>555 calculator</h2>
+  <p>Try your own resistor and capacitor values.</p>
+  <div class="card">
+    <label for="mode">Mode</label>
+    <select id="mode">
+      <option value="astable">Astable (clock)</option>
+      <option value="mono">Monostable (one pulse)</option>
+    </select>
+    <div class="calc">
+      <div id="r1box"><label for="r1">R1 (kΩ)</label><input id="r1" type="number" min="0" step="any" value="1"></div>
+      <div><label for="r2" id="r2label">R2 (kΩ)</label><input id="r2" type="number" min="0" step="any" value="100"></div>
+      <div><label for="c">C (µF)</label><input id="c" type="number" min="0" step="any" value="1"></div>
+    </div>
+    <div class="result" id="out"></div>
+  </div>
+</section>
+
+<section id="basics">
+  <h2>The basics</h2>
+  <div class="grid">
+    <div class="card"><h3>Inside the 555</h3><p>Two comparators, a flip-flop and a discharge transistor. Where 0.693 and 1.1 come from.</p><a href="https://github.com/MeshanNawod/8-bit-computer/blob/main/docs/basics/555-timer.md">Read →</a></div>
+    <div class="card"><h3>Transistors and gates</h3><p>How one transistor acts as a switch, and how NOT, AND and OR gates are built from them.</p><a href="https://github.com/MeshanNawod/8-bit-computer/blob/main/docs/basics/transistors-and-gates.md">Read →</a></div>
+    <div class="card"><h3>LED resistors</h3><p>R = (V − V<sub>LED</sub>) ÷ I. Why 220 Ω is used everywhere.</p><a href="https://github.com/MeshanNawod/8-bit-computer/blob/main/docs/basics/led-resistors.md">Read →</a></div>
+  </div>
+</section>
+
+<section id="links">
+  <h2>Files</h2>
+  <div class="card">
+    <ul>
+      <li><a href="https://github.com/MeshanNawod/8-bit-computer">GitHub repository</a></li>
+      <li><a href="https://github.com/MeshanNawod/8-bit-computer/blob/main/docs/parts-list.md">Parts list</a></li>
+      <li><a href="https://github.com/MeshanNawod/8-bit-computer/tree/main/hardware/tinkercad">Tinkercad board files (.brd)</a></li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<footer class="wrap">
+  Design credit: <a href="https://eater.net">Ben Eater</a>. Simulations in <a href="https://www.tinkercad.com/circuits">Tinkercad Circuits</a>. Write-ups and calculations by MeshanNawod. MIT licensed.
+</footer>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const fmtT = s => s >= 1 ? s.toFixed(2) + ' s' : (s * 1000).toFixed(s < 0.01 ? 2 : 1) + ' ms';
+  const fmtF = f => f >= 1000 ? (f / 1000).toFixed(2) + ' kHz' : f.toFixed(f < 10 ? 2 : 1) + ' Hz';
+  function calc() {
+    const mono = $('mode').value === 'mono';
+    $('r1box').style.display = mono ? 'none' : '';
+    $('r2label').textContent = mono ? 'R (kΩ)' : 'R2 (kΩ)';
+    const r1 = +$('r1').value * 1e3, r2 = +$('r2').value * 1e3, c = +$('c').value * 1e-6;
+    let html;
+    if (!(c > 0) || !(r2 >= 0) || (!mono && !(r1 > 0))) {
+      html = '<div><b>—</b><span>enter positive values</span></div>';
+    } else if (mono) {
+      const t = Math.log(3) * r2 * c;
+      html = `<div><b>${fmtT(t)}</b><span>pulse length</span></div>`;
+    } else {
+      const th = Math.LN2 * (r1 + r2) * c, tl = Math.LN2 * r2 * c;
+      html = `<div><b>${fmtF(1 / (th + tl))}</b><span>frequency</span></div>
+              <div><b>${fmtT(th)}</b><span>on time</span></div>
+              <div><b>${fmtT(tl)}</b><span>off time</span></div>
+              <div><b>${(100 * th / (th + tl)).toFixed(1)} %</b><span>duty cycle</span></div>`;
+    }
+    $('out').innerHTML = html;
+  }
+  $('mode').addEventListener('change', () => {
+    if ($('mode').value === 'mono') { $('r2').value = 1000; $('c').value = 0.1; }
+    else { $('r1').value = 1; $('r2').value = 100; $('c').value = 1; }
+    calc();
+  });
+  ['r1', 'r2', 'c'].forEach(id => $(id).addEventListener('input', calc));
+  calc();
+</script>
+</body>
+</html>
