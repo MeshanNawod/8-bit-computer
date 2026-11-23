@@ -144,6 +144,8 @@
     <h3>Part 1A: Astable 555 <span class="tag done">Done</span></h3>
     <p>The 555 switches its output on and off by itself, forever. A capacitor charges through two resistors until it reaches ⅔ of the supply voltage, then discharges until it falls to ⅓, over and over.</p>
     <img src="images/part1a-astable.png" alt="Part 1A breadboard in Tinkercad" loading="lazy">
+    <img src="images/diagrams/555-astable.svg" alt="Circuit diagram: 555 in astable mode with 1 kΩ, 100 kΩ, 1 µF and an LED" loading="lazy">
+    <p style="font-size:.85rem;color:var(--muted);margin-top:-8px">Diagram redrawn from Ben Eater's whiteboard drawing.</p>
     <p><strong>Parts:</strong> R1 = 1 kΩ, R2 = 100 kΩ, C = 1 µF</p>
     <div class="formula">f = 1.44 ÷ ((R1 + 2·R2) × C)<br>  = 1.44 ÷ ((1 000 + 200 000) × 0.000001)<br>  = 7.18 Hz</div>
     <div class="result">
@@ -181,6 +183,8 @@
     <h3>Part 2A: Single-step button <span class="tag done">Done</span></h3>
     <p>A push button's metal contacts <strong>bounce</strong>, so one press can look like several. The 555 in <em>monostable</em> mode fixes this: a press starts one clean pulse of fixed length, and bounces during that pulse are ignored.</p>
     <img src="images/part2a-monostable.png" alt="Part 2A breadboard with push button" loading="lazy">
+    <img src="images/diagrams/555-monostable.svg" alt="Circuit diagram: 555 in monostable mode with 1 MΩ, 0.1 µF and a push button" loading="lazy">
+    <p style="font-size:.85rem;color:var(--muted);margin-top:-8px">Diagram redrawn from Ben Eater's whiteboard drawing.</p>
     <p><strong>Parts:</strong> R = 1 MΩ, C = 0.1 µF, 1 kΩ pull-up on the button</p>
     <div class="formula">t = 1.1 × R × C<br>  = 1.1 × 1 000 000 × 0.0000001<br>  = 0.11 s</div>
     <div class="result">
@@ -226,7 +230,11 @@
     <h3>Part 4A: Clock logic <span class="tag done">Done</span></h3>
     <p>Three logic chips (<strong>74HC04</strong> NOT, <strong>74HC08</strong> AND, <strong>74HC32</strong> OR) turn the three timers into one clock. The bistable output SEL picks the source, and a HLT input stops the clock.</p>
     <img src="images/part4a-clock-logic.png" alt="Part 4A breadboard with three 555 timers and three logic chips" loading="lazy">
+    <img src="images/diagrams/clock-logic.svg" alt="Logic diagram: two AND gates, an OR gate and a final AND gate with HLT" loading="lazy">
     <div class="formula">CLK = (AST · SEL + MONO · not SEL) · not HLT</div>
+    <p>The same logic can be built from <strong>7 NAND gates</strong> (two 74xx00 chips): a NAND with its inputs tied together is a NOT, and NAND-ing two inverted signals gives an OR.</p>
+    <img src="images/diagrams/clock-logic-nand.svg" alt="Logic diagram: the clock logic built from seven NAND gates" loading="lazy">
+    <p style="font-size:.85rem;color:var(--muted);margin-top:-8px">Diagrams redrawn from Ben Eater's whiteboard drawings.</p>
     <div class="scroll"><table>
       <tr><th>SEL</th><th>HLT</th><th>CLK follows</th></tr>
       <tr><td>1</td><td>0</td><td>Astable (automatic)</td></tr>
@@ -259,6 +267,12 @@
 
 <section id="basics">
   <h2>The basics</h2>
+  <div class="card">
+    <h3>Inside the 555 timer</h3>
+    <p>A divider of three equal resistors makes 3.33 V and 1.67 V. Two comparators watch the Threshold and Trigger pins and set or reset a latch. The latch drives the output and the discharge transistor, and a LOW on Reset forces it off.</p>
+    <img src="images/diagrams/555-internals.svg" alt="Diagram of the inside of the 555 timer" loading="lazy">
+    <p style="font-size:.85rem;color:var(--muted);margin-top:-8px">Diagram redrawn from Ben Eater's whiteboard drawing.</p>
+  </div>
   <div class="grid">
     <div class="card"><h3>Inside the 555</h3><p>Two comparators, a flip-flop and a discharge transistor. Where 0.693 and 1.1 come from.</p><a href="https://github.com/MeshanNawod/8-bit-computer/blob/main/docs/basics/555-timer.md">Read →</a></div>
     <div class="card"><h3>Transistors and gates</h3><p>How one transistor acts as a switch, and how NOT, AND and OR gates are built from them.</p><a href="https://github.com/MeshanNawod/8-bit-computer/blob/main/docs/basics/transistors-and-gates.md">Read →</a></div>
@@ -273,6 +287,16 @@
       <li><a href="https://github.com/MeshanNawod/8-bit-computer">GitHub repository</a></li>
       <li><a href="https://github.com/MeshanNawod/8-bit-computer/blob/main/docs/parts-list.md">Parts list</a></li>
       <li><a href="https://github.com/MeshanNawod/8-bit-computer/tree/main/hardware/tinkercad">Tinkercad board files (.brd)</a></li>
+    </ul>
+    <h3 style="margin-top:18px">Tinkercad simulations</h3>
+    <ul>
+      <li><a href="https://www.tinkercad.com/things/l30rW27OBnZ-astable-555-timer-8-bit-computer-clock-part-1-a">Part 1A: Astable 555</a></li>
+      <li><a href="https://www.tinkercad.com/things/5Rx0vSOaq2a-astable-555-timer-8-bit-computer-clock-part-1b-">Part 1B: Astable with speed knob</a></li>
+      <li><a href="https://www.tinkercad.com/things/hLZbnoHB4L6-monostable-555-timer-8-bit-computer-clock-part-2a">Part 2A: Monostable 555</a></li>
+      <li><a href="https://www.tinkercad.com/things/8pzGGpFieEt-bistable-555-timer-8-bit-computer-clock-part-3b">Part 3: Plain select switch</a></li>
+      <li><a href="https://www.tinkercad.com/things/2x38PAtikeI-bistable-555-timer-8-bit-computer-clock-part-3b">Part 3B: All three 555 timers</a></li>
+      <li><a href="https://www.tinkercad.com/things/8nKWwN5A36f-monostable-555-timer-8-bit-computer-clock-part-3c">Part 3C: Bistable 555</a></li>
+      <li><a href="https://www.tinkercad.com/things/6YHy5r96IyL-clock-logic-8-bit-computer-clock-part-4a">Part 4A: Clock logic</a></li>
     </ul>
   </div>
 </section>

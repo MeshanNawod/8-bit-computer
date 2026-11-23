@@ -25,6 +25,28 @@ $$CLK = \big[(AST \cdot SEL) + (MONO \cdot \overline{SEL})\big] \cdot \overline{
 The first part is a **2-to-1 multiplexer** made from gates: SEL picks which
 input reaches the output. The last AND gate blocks the clock while HLT is HIGH.
 
+## Logic diagram
+
+![Clock select and halt logic with AND, OR and NOT gates](../../images/diagrams/clock-logic.svg)
+
+## The same logic with only NAND gates
+
+A NAND gate can make every other gate: a NAND with both inputs tied together is a NOT, and NAND-ing two inverted signals gives an OR (De Morgan's law: A + B = NOT(NOT A · NOT B)). So the whole clock logic fits in **7 NAND gates**, which is two 74xx00 chips instead of three different chips.
+
+![Clock logic built from 7 NAND gates](../../images/diagrams/clock-logic-nand.svg)
+
+| NAND gate | Inputs | Acts as |
+|-----------|--------|---------|
+| 1 | Astable, Select | NOT(Astable · Select) |
+| 2 | Select, Select | NOT Select |
+| 3 | NOT Select, Manual | NOT(Manual · NOT Select) |
+| 4 | gate 1, gate 3 | OR of the two terms |
+| 5 | HLT, HLT | NOT HLT |
+| 6 | gate 4, gate 5 | NOT(source · NOT HLT) |
+| 7 | gate 6, gate 6 | NOT, giving CLK |
+
+*Both diagrams redrawn from Ben Eater's whiteboard drawings.*
+
 ## Gate-by-gate wiring
 
 | Chip | Gate | Inputs | Output goes to |

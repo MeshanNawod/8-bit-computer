@@ -13,6 +13,12 @@ the automatic clock.
 
 ![Part 1A breadboard](../../images/part1a-astable.png)
 
+### Circuit
+
+![555 in astable mode with 1 kΩ, 100 kΩ and 1 µF](../../images/diagrams/555-astable.svg)
+
+*Diagram redrawn from Ben Eater's whiteboard drawing. External parts are green.*
+
 ### Connections (from the Tinkercad export)
 
 | 555 pin | Connected to |

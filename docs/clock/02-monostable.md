@@ -19,6 +19,12 @@ switches the output HIGH for a **fixed time** set by R and C, and then it
 returns to LOW by itself. Bounces during that time are ignored, because the
 output is already HIGH.
 
+## Circuit
+
+![555 in monostable mode with 1 MΩ, 0.1 µF and a push button](../../images/diagrams/555-monostable.svg)
+
+*Diagram redrawn from Ben Eater's whiteboard drawing. External parts are green.*
+
 ## Connections (from the Tinkercad export)
 
 | 555 pin | Connected to |

@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 440" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+  <title>Clock select and halt logic</title>
+  <style>
+    .w { fill: none; stroke: #222; stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; }
+    .g { fill: #fff; stroke: #222; stroke-width: 2.2; stroke-linejoin: round; }
+    .t { font-size: 17px; fill: #222; }
+    .in { font-size: 18px; fill: #1f3fae; }
+    .gl { font-size: 15px; fill: #222; font-weight: 700; text-anchor: middle; }
+    .n { font-size: 14px; fill: #c2410c; }
+  </style>
+  <rect width="900" height="440" fill="#fff"/>
+
+  <!-- inputs -->
+  <text class="in" x="20" y="64">Astable pulse</text>
+  <text class="in" x="20" y="206">Select</text>
+  <text class="in" x="20" y="336">Manual pulse</text>
+  <text class="in" x="20" y="406">HLT</text>
+
+  <!-- astable -> AND1 -->
+  <path class="w" d="M140 70 H250 V82 H310"/>
+  <!-- select node and branches -->
+  <path class="w" d="M90 200 H190"/>
+  <circle cx="190" cy="200" r="4.5" fill="#222"/>
+  <path class="w" d="M190 200 V108 H310"/>
+  <path class="w" d="M190 200 V292 H210"/>
+  <!-- NOT 1 -->
+  <polygon class="g" points="210,274 210,310 244,292"/>
+  <circle class="g" cx="250" cy="292" r="6"/>
+  <path class="w" d="M256 292 H310"/>
+  <!-- manual -> AND2 -->
+  <path class="w" d="M150 330 H270 V318 H310"/>
+
+  <!-- AND 1 -->
+  <path class="g" d="M310 65 H350 A30 30 0 0 1 350 125 H310 Z"/>
+  <text class="gl" x="343" y="100">AND</text>
+  <!-- AND 2 -->
+  <path class="g" d="M310 275 H350 A30 30 0 0 1 350 335 H310 Z"/>
+  <text class="gl" x="343" y="310">AND</text>
+
+  <!-- to OR -->
+  <path class="w" d="M380 95 H440 V172 H478"/>
+  <path class="w" d="M380 305 H440 V228 H478"/>
+  <!-- OR -->
+  <path class="g" d="M470 160 Q520 160 560 200 Q520 240 470 240 Q492 200 470 160 Z"/>
+  <text class="gl" x="515" y="205">OR</text>
+
+  <!-- OR -> AND3 -->
+  <path class="w" d="M560 200 H650"/>
+  <!-- HLT -> NOT2 -> AND3 -->
+  <path class="w" d="M60 400 H300"/>
+  <polygon class="g" points="300,382 300,418 334,400"/>
+  <circle class="g" cx="340" cy="400" r="6"/>
+  <path class="w" d="M346 400 H610 V240 H650"/>
+  <!-- AND 3 -->
+  <path class="g" d="M650 185 H690 A30 30 0 0 1 690 255 H650 Z" />
+  <text class="gl" x="684" y="225">AND</text>
+  <path class="w" d="M725 220 H830"/>
+  <text class="in" x="840" y="226">CLK</text>
+
+  <!-- signal names on the wires -->
+  <text class="n" x="262" y="284"><tspan text-decoration="overline">SEL</tspan></text>
+  <text class="n" x="568" y="190">source</text>
+  <text class="n" x="452" y="392"><tspan text-decoration="overline">HLT</tspan></text>
+  <text class="t" x="20" y="30" font-size="14" fill="#666">CLK = (Astable · Select + Manual · <tspan text-decoration="overline">Select</tspan>) · <tspan text-decoration="overline">HLT</tspan></text>
+</svg>

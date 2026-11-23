@@ -21,6 +21,10 @@ counter-clockwise when looking from the top.
 
 ## Inside the chip
 
+![Inside the 555 timer](../../images/diagrams/555-internals.svg)
+
+*Diagram redrawn from Ben Eater's whiteboard drawing.*
+
 | Block | Job |
 |-------|-----|
 | Three equal resistors (5 kΩ each in the original chip) | Divide VCC into reference points at **⅓ VCC** and **⅔ VCC** |

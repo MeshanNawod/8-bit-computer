@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+  <title>555 timer in astable mode</title>
+  <style>
+    .w { fill: none; stroke: #222; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+    .x { fill: none; stroke: #1a7f37; stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; }
+    .f { fill: #fff; stroke: #222; stroke-width: 2; stroke-linejoin: round; }
+    .box { fill: none; stroke: #5b4fc4; stroke-width: 2.2; }
+    .t { font-size: 15px; fill: #222; }
+    .s { font-size: 13px; fill: #222; }
+    .v { font-size: 15px; fill: #c2410c; }
+    .title { font-size: 20px; fill: #5b4fc4; }
+  </style>
+  <rect width="900" height="600" fill="#fff"/>
+
+  <g transform="translate(140,60)">
+    <rect class="box" x="230" y="60" width="370" height="410"/>
+    <text class="title" x="420" y="50">555 Timer</text>
+    <path class="w" d="M380 26 V110"/>
+    <polygon points="374,38 380,24 386,38" fill="#222"/>
+    <text class="v" x="390" y="30">+5 V</text>
+    <polyline class="w" points="380,110 387,114 373,121 387,128 373,135 387,142 373,148 380,150"/>
+    <path class="w" d="M380 150 V220"/>
+    <polyline class="w" points="380,220 387,224 373,231 387,238 373,245 387,252 373,258 380,260"/>
+    <path class="w" d="M380 260 V380"/>
+    <polyline class="w" points="380,380 387,384 373,391 387,398 373,405 387,412 373,418 380,420"/>
+    <path class="w" d="M380 420 V440 M366 440 H394 M371 446 H389 M376 452 H384"/>
+    <circle cx="380" cy="190" r="4" fill="#222"/><circle cx="380" cy="290" r="4" fill="#222"/>
+    <text class="v" x="372" y="186" text-anchor="end">3.33</text>
+    <text class="v" x="372" y="286" text-anchor="end">1.67</text>
+    <text class="v" x="400" y="458">0</text>
+    <polygon class="f" points="420,150 420,230 480,190"/><text class="s" x="425" y="176">+</text><text class="s" x="426" y="215">−</text>
+    <path class="w" d="M230 170 H374 A6 6 0 0 1 386 170 H420 M380 190 H400 V210 H420"/>
+    <text class="t" x="238" y="162">6 Threshold</text>
+    <polygon class="f" points="420,290 420,370 480,330"/><text class="s" x="425" y="316">+</text><text class="s" x="426" y="355">−</text>
+    <path class="w" d="M380 290 H400 V310 H420 M230 350 H374 A6 6 0 0 1 386 350 H420"/>
+    <text class="t" x="238" y="342">2 Trigger</text>
+    <rect class="f" x="510" y="160" width="70" height="200"/>
+    <text class="t" x="512" y="152">SR Latch</text>
+    <text class="t" x="516" y="195">R</text><text class="t" x="516" y="335">S</text>
+    <text class="t" x="561" y="195">Q̅</text><text class="t" x="562" y="335">Q</text>
+    <path class="w" d="M480 190 H510 M480 330 H510 M580 330 H600"/>
+    <text class="t" x="606" y="322">Output 3</text>
+    <path class="w" d="M580 190 H592 V100 H386 A6 6 0 0 0 374 100 H338"/>
+    <circle class="f" cx="320" cy="100" r="24"/>
+    <path class="w" d="M314 85 V115 M314 100 H338 M314 91 L296 79 H230 M314 109 L298 121 V139"/>
+    <polygon points="298,121 304,111 308,119" fill="#222"/>
+    <path class="w" d="M288 139 H308 M292 144 H304 M296 149 H300"/>
+    <text class="t" x="238" y="68">7 Discharge</text>
+  </g>
+
+  <!-- external parts (green): 1k, 100k, 1uF -->
+  <path class="x" d="M250 24 V58"/>
+  <polygon points="244,36 250,22 256,36" fill="#1a7f37"/>
+  <text class="v" x="262" y="30">+5 V</text>
+  <polyline class="x" points="250,58 257,62 243,69 257,76 243,83 257,90 243,96 250,98"/>
+  <text class="v" x="264" y="84">1 kΩ</text>
+  <path class="x" d="M250 98 V139 H370"/>
+  <circle cx="250" cy="139" r="4" fill="#1a7f37"/>
+  <path class="x" d="M250 139 V160"/>
+  <polyline class="x" points="250,160 257,164 243,171 257,178 243,185 257,192 243,198 250,200"/>
+  <text class="v" x="264" y="186">100 kΩ</text>
+  <path class="x" d="M250 200 V230 H370"/>
+  <circle cx="250" cy="230" r="4" fill="#1a7f37"/>
+  <path class="x" d="M250 230 V410 H370"/>
+  <circle cx="250" cy="410" r="4" fill="#1a7f37"/>
+  <path class="x" d="M250 410 V440 M232 440 H268 M232 452 H268 M250 452 V476 M236 476 H264 M241 482 H259 M246 488 H254"/>
+  <text class="v" x="276" y="452">1 µF</text>
+
+  <!-- LED + 220 ohm on the output -->
+  <path class="x" d="M740 390 H810 V408"/>
+  <polygon points="796,408 824,408 810,430" fill="#fff" stroke="#1a7f37" stroke-width="2.2"/>
+  <path class="x" d="M796 430 H824 M810 430 V450 M826 412 L840 400 M830 420 L844 408"/>
+  <polyline class="x" points="810,450 817,454 803,461 817,468 803,475 817,482 803,488 810,490"/>
+  <path class="x" d="M810 490 V510 M796 510 H824 M801 516 H819 M806 522 H814"/>
+  <text class="v" x="826" y="474">220 Ω</text>
+  <text class="v" x="846" y="424">LED</text>
+
+  <text class="s" x="20" y="580" fill="#444">f = 1.44 ÷ ((1 kΩ + 2 × 100 kΩ) × 1 µF) ≈ 7.18 Hz · pins 2 and 6 are tied together · pin 4 to +5 V, pin 5 via 0.1 µF</text>
+</svg>

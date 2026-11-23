@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 510" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+  <title>Inside the 555 timer</title>
+  <style>
+    .w { fill: none; stroke: #222; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+    .f { fill: #fff; stroke: #222; stroke-width: 2; stroke-linejoin: round; }
+    .box { fill: none; stroke: #5b4fc4; stroke-width: 2.2; }
+    .t { font-size: 15px; fill: #222; }
+    .s { font-size: 13px; fill: #222; }
+    .v { font-size: 14px; fill: #c2410c; }
+    .title { font-size: 20px; fill: #5b4fc4; }
+  </style>
+  <rect width="760" height="510" fill="#fff"/>
+  <rect class="box" x="230" y="60" width="370" height="410"/>
+  <text class="title" x="420" y="50">555 Timer</text>
+
+  <!-- supply rail and divider -->
+  <path class="w" d="M380 26 V110"/>
+  <polygon points="374,38 380,24 386,38" fill="#222"/>
+  <text class="v" x="390" y="30">+5 V</text>
+  <polyline class="w" points="380,110 387,114 373,121 387,128 373,135 387,142 373,148 380,150"/>
+  <path class="w" d="M380 150 V220"/>
+  <polyline class="w" points="380,220 387,224 373,231 387,238 373,245 387,252 373,258 380,260"/>
+  <path class="w" d="M380 260 V380"/>
+  <polyline class="w" points="380,380 387,384 373,391 387,398 373,405 387,412 373,418 380,420"/>
+  <path class="w" d="M380 420 V440 M366 440 H394 M371 446 H389 M376 452 H384"/>
+  <circle cx="380" cy="190" r="4" fill="#222"/>
+  <circle cx="380" cy="290" r="4" fill="#222"/>
+  <text class="v" x="372" y="186" text-anchor="end">3.33 V</text>
+  <text class="v" x="372" y="286" text-anchor="end">1.67 V</text>
+  <text class="v" x="400" y="458">0 V</text>
+
+  <!-- comparator 1 (threshold) -->
+  <polygon class="f" points="420,150 420,230 480,190"/>
+  <text class="s" x="425" y="176">+</text><text class="s" x="426" y="215">−</text>
+  <path class="w" d="M230 170 H374 A6 6 0 0 1 386 170 H420"/>
+  <path class="w" d="M380 190 H400 V210 H420"/>
+  <text class="t" x="238" y="162">6 Threshold</text>
+
+  <!-- comparator 2 (trigger) -->
+  <polygon class="f" points="420,290 420,370 480,330"/>
+  <text class="s" x="425" y="316">+</text><text class="s" x="426" y="355">−</text>
+  <path class="w" d="M380 290 H400 V310 H420"/>
+  <path class="w" d="M230 350 H374 A6 6 0 0 1 386 350 H420"/>
+  <text class="t" x="238" y="342">2 Trigger</text>
+
+  <!-- SR latch -->
+  <rect class="f" x="510" y="160" width="70" height="200"/>
+  <text class="t" x="512" y="152">SR Latch</text>
+  <text class="t" x="516" y="195">R</text><text class="t" x="516" y="335">S</text>
+  <text class="t" x="561" y="195">Q̅</text><text class="t" x="562" y="335">Q</text>
+  <path class="w" d="M480 190 H510 M480 330 H510"/>
+  <path class="w" d="M580 330 H660"/>
+  <text class="t" x="612" y="322">Output 3</text>
+
+  <!-- Q-bar drives the discharge transistor -->
+  <path class="w" d="M580 190 H592 V100 H386 A6 6 0 0 0 374 100 H338"/>
+  <circle class="f" cx="320" cy="100" r="24"/>
+  <path class="w" d="M314 85 V115 M314 100 H338 M314 91 L296 79 H230 M314 109 L298 121 V139"/>
+  <polygon points="298,121 304,111 308,119" fill="#222"/>
+  <path class="w" d="M288 139 H308 M292 144 H304 M296 149 H300"/>
+  <text class="t" x="238" y="68">7 Discharge</text>
+
+  <!-- reset (pin 4) -->
+  <path class="w" d="M650 125 H598 A6 6 0 0 0 586 125 H545"/>
+  <polygon class="f" points="545,113 545,137 517,125"/>
+  <circle class="f" cx="511" cy="125" r="5.5"/>
+  <path class="w" d="M505 125 H495 V190"/>
+  <circle cx="495" cy="190" r="4" fill="#222"/>
+  <text class="t" x="612" y="117"><tspan text-decoration="overline">Reset</tspan> 4</text>
+  <text class="s" x="20" y="498" fill="#666">Comparator outputs set (S) or reset (R) the latch. A LOW on <tspan text-decoration="overline">Reset</tspan> (pin 4) forces it to reset.</text>
+</svg>

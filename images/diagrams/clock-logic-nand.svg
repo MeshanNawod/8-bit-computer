@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 460" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+  <title>Clock logic built only from NAND gates</title>
+  <style>
+    .w { fill: none; stroke: #222; stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; }
+    .g { fill: #fff; stroke: #222; stroke-width: 2.2; stroke-linejoin: round; }
+    .in { font-size: 18px; fill: #1f3fae; }
+    .r { font-size: 13px; fill: #c2410c; text-anchor: middle; }
+    .note { font-size: 13px; fill: #666; }
+  </style>
+  <rect width="1020" height="460" fill="#fff"/>
+
+  <!-- inputs -->
+  <text class="in" x="20" y="66">Astable pulse</text>
+  <text class="in" x="20" y="206">Select</text>
+  <text class="in" x="20" y="346">Manual pulse</text>
+  <text class="in" x="20" y="406">HLT</text>
+
+  <!-- N1: NAND(Astable, Select) -->
+  <path class="w" d="M140 72 H200 V75 H230"/>
+  <path class="w" d="M80 200 H160"/>
+  <circle cx="160" cy="200" r="4.5" fill="#222"/>
+  <path class="w" d="M160 200 V105 H230"/>
+  <path class="g" d="M230 60 H260 A30 30 0 0 1 260 120 H230 Z"/>
+  <circle class="g" cx="296" cy="90" r="6"/>
+
+  <!-- N2: NAND used as NOT (Select) -->
+  <path class="w" d="M160 200 V285 H190"/>
+  <circle cx="190" cy="285" r="4.5" fill="#222"/>
+  <path class="w" d="M190 270 V300 M190 270 H210 M190 300 H210"/>
+  <path class="g" d="M210 255 H240 A30 30 0 0 1 240 315 H210 Z"/>
+  <circle class="g" cx="276" cy="285" r="6"/>
+  <text class="r" x="240" y="333">NOT</text>
+  <path class="w" d="M282 285 H340 V300 H380"/>
+
+  <!-- N3: NAND(Select-bar, Manual) -->
+  <path class="w" d="M140 340 H350 V330 H380"/>
+  <path class="g" d="M380 285 H410 A30 30 0 0 1 410 345 H380 Z"/>
+  <circle class="g" cx="446" cy="315" r="6"/>
+
+  <!-- N4: NAND acting as OR of the two inverted terms -->
+  <path class="w" d="M302 90 H500 V185 H540"/>
+  <path class="w" d="M452 315 H500 V215 H540"/>
+  <path class="g" d="M540 170 H570 A30 30 0 0 1 570 230 H540 Z"/>
+  <circle class="g" cx="606" cy="200" r="6"/>
+  <text class="r" x="570" y="248">= OR</text>
+
+  <!-- N6: NAND used as NOT (HLT) -->
+  <path class="w" d="M60 400 H330"/>
+  <circle cx="330" cy="400" r="4.5" fill="#222"/>
+  <path class="w" d="M330 385 V415 M330 385 H350 M330 415 H350"/>
+  <path class="g" d="M350 370 H380 A30 30 0 0 1 380 430 H350 Z"/>
+  <circle class="g" cx="416" cy="400" r="6"/>
+  <text class="r" x="380" y="448">NOT</text>
+
+  <!-- N5: NAND(OR output, HLT-bar) -->
+  <path class="w" d="M612 200 H700"/>
+  <path class="w" d="M422 400 H660 V230 H700"/>
+  <path class="g" d="M700 185 H730 A30 30 0 0 1 730 245 H700 Z"/>
+  <circle class="g" cx="766" cy="215" r="6"/>
+
+  <!-- N7: NAND used as NOT, gives CLK -->
+  <path class="w" d="M772 215 H820"/>
+  <circle cx="820" cy="215" r="4.5" fill="#222"/>
+  <path class="w" d="M820 215 V245 H840 M820 215 H840"/>
+  <path class="g" d="M840 200 H870 A30 30 0 0 1 870 260 H840 Z"/>
+  <circle class="g" cx="906" cy="230" r="6"/>
+  <text class="r" x="870" y="278">NOT</text>
+  <path class="w" d="M912 230 H955"/>
+  <text class="in" x="962" y="236">CLK</text>
+
+  <text class="note" x="20" y="30">Same logic as the AND / OR / NOT version, built from 7 NAND gates (two 74xx00 chips).</text>
+</svg>

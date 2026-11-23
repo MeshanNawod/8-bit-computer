@@ -66,6 +66,28 @@ CLK = (AST · SEL + MONO · SEL̅) · HLT̅
 All values are read from the Tinkercad board exports in
 [`hardware/tinkercad/`](hardware/tinkercad).
 
+## Tinkercad simulations
+
+- Part 1A, astable 555: <https://www.tinkercad.com/things/l30rW27OBnZ-astable-555-timer-8-bit-computer-clock-part-1-a>
+- Part 1B, astable with pot: <https://www.tinkercad.com/things/5Rx0vSOaq2a-astable-555-timer-8-bit-computer-clock-part-1b->
+- Part 2A, monostable 555: <https://www.tinkercad.com/things/hLZbnoHB4L6-monostable-555-timer-8-bit-computer-clock-part-2a>
+- Part 3B, all three 555s: <https://www.tinkercad.com/things/2x38PAtikeI-bistable-555-timer-8-bit-computer-clock-part-3b>
+- Part 3C, bistable 555: <https://www.tinkercad.com/things/8nKWwN5A36f-monostable-555-timer-8-bit-computer-clock-part-3c>
+- Part 3, plain select switch: <https://www.tinkercad.com/things/8pzGGpFieEt-bistable-555-timer-8-bit-computer-clock-part-3b>
+- Part 4A, clock logic: <https://www.tinkercad.com/things/6YHy5r96IyL-clock-logic-8-bit-computer-clock-part-4a>
+
+## Diagrams
+
+Redrawn as clean SVGs from Ben Eater's whiteboard drawings:
+
+| Diagram | Shows |
+|---------|-------|
+| [555-internals.svg](images/diagrams/555-internals.svg) | Inside the 555: divider, comparators, SR latch, discharge transistor, reset |
+| [555-astable.svg](images/diagrams/555-astable.svg) | Astable wiring with 1 kΩ, 100 kΩ, 1 µF and an LED |
+| [555-monostable.svg](images/diagrams/555-monostable.svg) | Monostable wiring with 1 MΩ, 0.1 µF and a push button |
+| [clock-logic.svg](images/diagrams/clock-logic.svg) | Clock select and halt logic (AND, OR, NOT) |
+| [clock-logic-nand.svg](images/diagrams/clock-logic-nand.svg) | The same logic with 7 NAND gates |
+
 ## Background reading in this repo
 
 - [How the 555 timer works inside](docs/basics/555-timer.md)
@@ -82,6 +104,7 @@ All values are read from the Tinkercad board exports in
 | `docs/parts-list.md` | Parts list for the clock module |
 | `hardware/tinkercad/` | Eagle `.brd` exports of each Tinkercad circuit |
 | `images/` | Tinkercad breadboard screenshots |
+| `images/diagrams/` | Circuit and logic diagrams (SVG) |
 | `index.html`, `site.js` | The project website (GitHub Pages) |
 
 ## Credits

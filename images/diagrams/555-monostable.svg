@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+  <title>555 timer in monostable mode</title>
+  <style>
+    .w { fill: none; stroke: #222; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+    .x { fill: none; stroke: #1a7f37; stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; }
+    .f { fill: #fff; stroke: #222; stroke-width: 2; stroke-linejoin: round; }
+    .box { fill: none; stroke: #5b4fc4; stroke-width: 2.2; }
+    .t { font-size: 15px; fill: #222; }
+    .s { font-size: 13px; fill: #222; }
+    .v { font-size: 15px; fill: #c2410c; }
+    .title { font-size: 20px; fill: #5b4fc4; }
+  </style>
+  <rect width="900" height="600" fill="#fff"/>
+
+  <g transform="translate(140,60)">
+    <rect class="box" x="230" y="60" width="370" height="410"/>
+    <text class="title" x="420" y="50">555 Timer</text>
+    <path class="w" d="M380 26 V110"/>
+    <polygon points="374,38 380,24 386,38" fill="#222"/>
+    <text class="v" x="390" y="30">+5 V</text>
+    <polyline class="w" points="380,110 387,114 373,121 387,128 373,135 387,142 373,148 380,150"/>
+    <path class="w" d="M380 150 V220"/>
+    <polyline class="w" points="380,220 387,224 373,231 387,238 373,245 387,252 373,258 380,260"/>
+    <path class="w" d="M380 260 V380"/>
+    <polyline class="w" points="380,380 387,384 373,391 387,398 373,405 387,412 373,418 380,420"/>
+    <path class="w" d="M380 420 V440 M366 440 H394 M371 446 H389 M376 452 H384"/>
+    <circle cx="380" cy="190" r="4" fill="#222"/><circle cx="380" cy="290" r="4" fill="#222"/>
+    <text class="v" x="372" y="186" text-anchor="end">3.33</text>
+    <text class="v" x="372" y="286" text-anchor="end">1.67</text>
+    <text class="v" x="400" y="458">0</text>
+    <polygon class="f" points="420,150 420,230 480,190"/><text class="s" x="425" y="176">+</text><text class="s" x="426" y="215">−</text>
+    <path class="w" d="M230 170 H374 A6 6 0 0 1 386 170 H420 M380 190 H400 V210 H420"/>
+    <text class="t" x="238" y="162">6 Threshold</text>
+    <polygon class="f" points="420,290 420,370 480,330"/><text class="s" x="425" y="316">+</text><text class="s" x="426" y="355">−</text>
+    <path class="w" d="M380 290 H400 V310 H420 M230 350 H374 A6 6 0 0 1 386 350 H420"/>
+    <text class="t" x="238" y="342">2 Trigger</text>
+    <rect class="f" x="510" y="160" width="70" height="200"/>
+    <text class="t" x="512" y="152">SR Latch</text>
+    <text class="t" x="516" y="195">R</text><text class="t" x="516" y="335">S</text>
+    <text class="t" x="561" y="195">Q̅</text><text class="t" x="562" y="335">Q</text>
+    <path class="w" d="M480 190 H510 M480 330 H510 M580 330 H660"/>
+    <text class="t" x="612" y="322">Output 3</text>
+    <path class="w" d="M580 190 H592 V100 H386 A6 6 0 0 0 374 100 H338"/>
+    <circle class="f" cx="320" cy="100" r="24"/>
+    <path class="w" d="M314 85 V115 M314 100 H338 M314 91 L296 79 H230 M314 109 L298 121 V139"/>
+    <polygon points="298,121 304,111 308,119" fill="#222"/>
+    <path class="w" d="M288 139 H308 M292 144 H304 M296 149 H300"/>
+    <text class="t" x="238" y="68">7 Discharge</text>
+  </g>
+
+  <!-- timing parts: 1M and 0.1uF on pins 6 and 7 -->
+  <path class="x" d="M250 24 V58"/>
+  <polygon points="244,36 250,22 256,36" fill="#1a7f37"/>
+  <text class="v" x="262" y="30">+5 V</text>
+  <polyline class="x" points="250,58 257,62 243,69 257,76 243,83 257,90 243,96 250,98"/>
+  <text class="v" x="264" y="84">1 MΩ</text>
+  <path class="x" d="M250 98 V139 H370"/>
+  <circle cx="250" cy="139" r="4" fill="#1a7f37"/>
+  <path class="x" d="M250 139 V230 H370"/>
+  <circle cx="250" cy="230" r="4" fill="#1a7f37"/>
+  <path class="x" d="M250 230 V262 M232 262 H268 M232 274 H268 M250 274 V296 M236 296 H264 M241 302 H259 M246 308 H254"/>
+  <text class="v" x="276" y="274">0.1 µF</text>
+
+  <!-- trigger: 1k pull-up and push button -->
+  <path class="x" d="M150 300 V330"/>
+  <polygon points="144,312 150,298 156,312" fill="#1a7f37"/>
+  <text class="v" x="162" y="306">+5 V</text>
+  <polyline class="x" points="150,330 157,334 143,341 157,348 143,355 157,362 143,368 150,370"/>
+  <text class="v" x="164" y="356">1 kΩ</text>
+  <path class="x" d="M150 370 V410 H370"/>
+  <circle cx="150" cy="410" r="4" fill="#1a7f37"/>
+  <path class="x" d="M150 410 V438"/>
+  <circle cx="150" cy="442" r="4" fill="none" stroke="#1a7f37" stroke-width="2"/>
+  <circle cx="150" cy="474" r="4" fill="none" stroke="#1a7f37" stroke-width="2"/>
+  <path class="x" d="M134 446 V470 M134 458 H122"/>
+  <path class="x" d="M150 478 V500 M136 500 H164 M141 506 H159 M146 512 H154"/>
+  <text class="v" x="164" y="462">button</text>
+
+  <text class="s" x="20" y="580" fill="#444">Press: Trigger drops below 1.67 V → output HIGH. The 0.1 µF charges through 1 MΩ; at 3.33 V the output goes LOW. t = 1.1 × 1 MΩ × 0.1 µF ≈ 110 ms</text>
+</svg>
