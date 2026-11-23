@@ -57,7 +57,14 @@
   .result { display: flex; flex-wrap: wrap; gap: 28px; margin: 12px 0 16px; }
   .result b { display: block; font-size: 1.5rem; line-height: 1.2; }
   .result span { font-size: .85rem; color: var(--muted); }
-  .formula { font-family: Menlo, Consolas, monospace; background: var(--soft); padding: 12px 16px; overflow-x: auto; font-size: .92rem; margin: 10px 0 14px; }
+  .formula { background: var(--soft); border-left: 3px solid var(--accent); padding: 14px 18px; overflow-x: auto; margin: 12px 0 16px; }
+  .formula math { font-size: 1.35rem; font-family: "STIX Two Math", "Cambria Math", "Latin Modern Math", serif; text-align: left; math-style: normal; }
+  .formula mtable, .formula mtd, .formula mfrac { math-style: normal; }
+  .formula mtd { padding: 4px 6px; }
+  .formula .bar { text-decoration: overline; text-decoration-thickness: 1.5px; }
+  .formula mtd:first-child { text-align: right; }
+  .formula mtd:last-child { text-align: left; }
+  .formula .note { display: block; font-size: .85rem; color: var(--muted); margin-top: 8px; }
   code { font-family: Menlo, Consolas, monospace; font-size: .9em; background: var(--soft); padding: 1px 4px; }
   table { width: 100%; border-collapse: collapse; font-size: .95rem; }
   th, td { text-align: left; padding: 8px 10px 8px 0; border-bottom: 1px solid var(--line); }
@@ -147,7 +154,15 @@
     <img src="images/diagrams/555-astable.svg" alt="Circuit diagram: 555 in astable mode with 1 kΩ, 100 kΩ, 1 µF and an LED" loading="lazy">
     <p style="font-size:.85rem;color:var(--muted);margin-top:-8px">Diagram redrawn from Ben Eater's whiteboard drawing.</p>
     <p><strong>Parts:</strong> R1 = 1 kΩ, R2 = 100 kΩ, C = 1 µF</p>
-    <div class="formula">f = 1.44 ÷ ((R1 + 2·R2) × C)<br>  = 1.44 ÷ ((1 000 + 200 000) × 0.000001)<br>  = 7.18 Hz</div>
+    <div class="formula">
+      <math display="block" displaystyle="true"><mtable columnalign="right center left" rowspacing="0.6em">
+        <mtr><mtd><mi>f</mi></mtd><mtd><mo>=</mo></mtd><mtd><mfrac><mn>1.44</mn><mrow><mo>(</mo><msub><mi>R</mi><mn>1</mn></msub><mo>+</mo><mn>2</mn><msub><mi>R</mi><mn>2</mn></msub><mo>)</mo><mo>&#x22C5;</mo><mi>C</mi></mrow></mfrac></mtd></mtr>
+        <mtr><mtd></mtd><mtd><mo>=</mo></mtd><mtd><mfrac><mn>1.44</mn><mrow><mo>(</mo><mn>1</mn><mtext>&#x2009;k&#x3A9;</mtext><mo>+</mo><mn>2</mn><mo>&#xD7;</mo><mn>100</mn><mtext>&#x2009;k&#x3A9;</mtext><mo>)</mo><mo>&#xD7;</mo><mn>1</mn><mtext>&#x2009;&#xB5;F</mtext></mrow></mfrac></mtd></mtr>
+        <mtr><mtd></mtd><mtd><mo>=</mo></mtd><mtd><mfrac><mn>1.44</mn><mrow><mn>0.201</mn><mtext>&#x2009;s</mtext></mrow></mfrac><mo>=</mo><mn>7.18</mn><mtext>&#x2009;Hz</mtext></mtd></mtr>
+        <mtr><mtd><mi>D</mi></mtd><mtd><mo>=</mo></mtd><mtd><mfrac><mrow><msub><mi>R</mi><mn>1</mn></msub><mo>+</mo><msub><mi>R</mi><mn>2</mn></msub></mrow><mrow><msub><mi>R</mi><mn>1</mn></msub><mo>+</mo><mn>2</mn><msub><mi>R</mi><mn>2</mn></msub></mrow></mfrac><mo>=</mo><mfrac><mn>101</mn><mn>201</mn></mfrac><mo>=</mo><mn>50.2</mn><mtext>&#x2009;%</mtext></mtd></mtr>
+      </mtable></math>
+      <span class="note">f is the frequency; D is the duty cycle (the share of each cycle the output is HIGH).</span>
+    </div>
     <div class="result">
       <div><b>7.18 Hz</b><span>blinks per second</span></div>
       <div><b>70 ms</b><span>on time</span></div>
@@ -165,7 +180,13 @@
     <h3>Part 1B: Adjustable speed <span class="tag done">Done</span></h3>
     <p>R2 becomes a <strong>1 kΩ resistor plus a 1 MΩ knob</strong>. Turning the knob changes how long the capacitor takes to charge, which changes the speed. The extra 1 kΩ sets a safe top speed when the knob is at zero.</p>
     <img src="images/part1b-astable-pot.png" alt="Part 1B breadboard with potentiometer" loading="lazy">
-    <div class="scroll"><table>
+    <div class="formula">
+      <math display="block" displaystyle="true"><mtable columnalign="right center left" rowspacing="0.6em">
+        <mtr><mtd><msub><mi>R</mi><mn>2</mn></msub></mtd><mtd><mo>=</mo></mtd><mtd><mn>1</mn><mtext>&#x2009;k&#x3A9;</mtext><mo>+</mo><msub><mi>R</mi><mtext>pot</mtext></msub><mo>,</mo><mspace width="1em"/><mn>0</mn><mo>&#x2264;</mo><msub><mi>R</mi><mtext>pot</mtext></msub><mo>&#x2264;</mo><mn>1</mn><mtext>&#x2009;M&#x3A9;</mtext></mtd></mtr>
+        <mtr><mtd><msub><mi>f</mi><mtext>max</mtext></msub></mtd><mtd><mo>=</mo></mtd><mtd><mfrac><mn>1.44</mn><mrow><mo>(</mo><mn>1</mn><mtext>&#x2009;k&#x3A9;</mtext><mo>+</mo><mn>2</mn><mo>&#xD7;</mo><mn>1</mn><mtext>&#x2009;k&#x3A9;</mtext><mo>)</mo><mo>&#xD7;</mo><mn>1</mn><mtext>&#x2009;&#xB5;F</mtext></mrow></mfrac><mo>=</mo><mn>480</mn><mtext>&#x2009;Hz</mtext></mtd></mtr>
+        <mtr><mtd><msub><mi>f</mi><mtext>min</mtext></msub></mtd><mtd><mo>=</mo></mtd><mtd><mfrac><mn>1.44</mn><mrow><mo>(</mo><mn>1</mn><mtext>&#x2009;k&#x3A9;</mtext><mo>+</mo><mn>2</mn><mo>&#xD7;</mo><mn>1.001</mn><mtext>&#x2009;M&#x3A9;</mtext><mo>)</mo><mo>&#xD7;</mo><mn>1</mn><mtext>&#x2009;&#xB5;F</mtext></mrow></mfrac><mo>=</mo><mn>0.72</mn><mtext>&#x2009;Hz</mtext></mtd></mtr>
+      </mtable></math>
+    </div>    <div class="scroll"><table>
       <tr><th>Knob</th><th>R2</th><th>Speed</th></tr>
       <tr><td>Maximum</td><td>1.001 MΩ</td><td><strong>0.72 Hz</strong> (slow, easy to watch)</td></tr>
       <tr><td>Half</td><td>501 kΩ</td><td>1.44 Hz</td></tr>
@@ -186,7 +207,14 @@
     <img src="images/diagrams/555-monostable.svg" alt="Circuit diagram: 555 in monostable mode with 1 MΩ, 0.1 µF and a push button" loading="lazy">
     <p style="font-size:.85rem;color:var(--muted);margin-top:-8px">Diagram redrawn from Ben Eater's whiteboard drawing.</p>
     <p><strong>Parts:</strong> R = 1 MΩ, C = 0.1 µF, 1 kΩ pull-up on the button</p>
-    <div class="formula">t = 1.1 × R × C<br>  = 1.1 × 1 000 000 × 0.0000001<br>  = 0.11 s</div>
+    <div class="formula">
+      <math display="block" displaystyle="true"><mtable columnalign="right center left" rowspacing="0.6em">
+        <mtr><mtd><mi>t</mi></mtd><mtd><mo>=</mo></mtd><mtd><mi>ln</mi><mo>&#x2061;</mo><mn>3</mn><mo>&#x22C5;</mo><mi>R</mi><mo>&#x22C5;</mo><mi>C</mi><mo>&#x2248;</mo><mn>1.1</mn><mo>&#x22C5;</mo><mi>R</mi><mo>&#x22C5;</mo><mi>C</mi></mtd></mtr>
+        <mtr><mtd></mtd><mtd><mo>=</mo></mtd><mtd><mn>1.1</mn><mo>&#xD7;</mo><mn>1</mn><mtext>&#x2009;M&#x3A9;</mtext><mo>&#xD7;</mo><mn>0.1</mn><mtext>&#x2009;&#xB5;F</mtext></mtd></mtr>
+        <mtr><mtd></mtd><mtd><mo>=</mo></mtd><mtd><mn>1.1</mn><mo>&#xD7;</mo><mn>0.1</mn><mtext>&#x2009;s</mtext><mo>=</mo><mn>110</mn><mtext>&#x2009;ms</mtext></mtd></mtr>
+      </mtable></math>
+      <span class="note">t is how long the output stays HIGH after one press.</span>
+    </div>
     <div class="result">
       <div><b>110 ms</b><span>pulse length</span></div>
       <div><b>≈ 10 ms</b><span>typical bounce</span></div>
@@ -231,7 +259,10 @@
     <p>Three logic chips (<strong>74HC04</strong> NOT, <strong>74HC08</strong> AND, <strong>74HC32</strong> OR) turn the three timers into one clock. The bistable output SEL picks the source, and a HLT input stops the clock.</p>
     <img src="images/part4a-clock-logic.png" alt="Part 4A breadboard with three 555 timers and three logic chips" loading="lazy">
     <img src="images/diagrams/clock-logic.svg" alt="Logic diagram: two AND gates, an OR gate and a final AND gate with HLT" loading="lazy">
-    <div class="formula">CLK = (AST · SEL + MONO · not SEL) · not HLT</div>
+    <div class="formula">
+      <math display="block" displaystyle="true"><mrow><mi>CLK</mi><mo>=</mo><mo>(</mo><mi>AST</mi><mo>&#x22C5;</mo><mi>SEL</mi><mo>+</mo><mi>MONO</mi><mo>&#x22C5;</mo><mi class="bar">SEL</mi><mo>)</mo><mo>&#x22C5;</mo><mi class="bar">HLT</mi></mrow></math>
+      <span class="note">&#x22C5; means AND, + means OR, a bar on top means NOT.</span>
+    </div>
     <p>The same logic can be built from <strong>7 NAND gates</strong> (two 74xx00 chips): a NAND with its inputs tied together is a NOT, and NAND-ing two inverted signals gives an OR.</p>
     <img src="images/diagrams/clock-logic-nand.svg" alt="Logic diagram: the clock logic built from seven NAND gates" loading="lazy">
     <p style="font-size:.85rem;color:var(--muted);margin-top:-8px">Diagrams redrawn from Ben Eater's whiteboard drawings.</p>
