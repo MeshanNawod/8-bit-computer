@@ -148,42 +148,57 @@
     });
   })();
 
-  // ---------- PCB viewer ----------
+  // ---------- PCB viewer (routed boards) ----------
   const BOARDS = [
-    { label: 'Part 1a: Astable', file: 'hardware/tinkercad/part1a-astable.brd' },
-    { label: 'Part 1b: Astable + pot', file: 'hardware/tinkercad/part1b-astable-pot.brd' },
-    { label: 'Part 2: Monostable', file: 'hardware/tinkercad/part2-monostable.brd' },
-    { label: 'Part 3: Clock select', file: 'hardware/tinkercad/part3-clock-select.brd' }
+    { label: 'Part 1a: Astable', id: 'part1a-astable' },
+    { label: 'Part 1b: Astable + pot', id: 'part1b-astable-pot' },
+    { label: 'Part 2: Monostable', id: 'part2-monostable' },
+    { label: 'Part 3: Clock select', id: 'part3-clock-select' }
   ];
   const KIND = {
     'DIP826W53P254L959H508Q8B': '555 timer (DIP-8)', 'RESAD1016W63L850D250B': 'Resistor',
     'CAP-THRU-2.54MM': 'Ceramic capacitor', 'CAPPRD254W65D500H1150B': 'Electrolytic capacitor',
     'LEDRD254W60D565H860B': 'LED', 'LEDRD254W60D565H860B_Y': 'LED', 'HA-06-SM065': 'Potentiometer',
     'SWITCH-MOMENTARY-PTH-6.5MM': 'Push button', 'SWITCH-SPDT-PTH-8.5X3.7MM': 'SPDT switch',
-    'BATTERY-GENERIC': '5 V supply'
+    'BATTERY-GENERIC': '5 V power input'
   };
-  const nice = v => ({ LM555_DIP: 'LM555', BATTERYGENERIC: '5 V', SWITCH_MOMENTARY: 'momentary', TOGGLE: 'toggle' }[v] ||
+  const nice = v => ({ LM555_DIP: 'LM555', BATTERYGENERIC: '5 V', SWITCH_MOMENTARY: 'momentary', TOGGLE: 'toggle', RED: 'red', YELLOW: 'yellow' }[v] ||
     v.replace(/^(\d+(?:\.\d+)?)u$/, '$1 µF').replace(/^(\d+)n$/, '$1 nF').replace(/^(\d+)k$/, '$1 kΩ').replace(/^(\d+)M$/, '$1 MΩ').replace(/^(\d+)$/, '$1 Ω'));
 
   const view = document.getElementById('pcbView'), tabs = document.getElementById('pcbTabs');
   if (!view) return;
   const cache = {};
+  let current = 0;
   BOARDS.forEach((b, i) => {
-    const bt = document.createElement('button'); bt.type = 'button'; bt.role = 'tab'; bt.textContent = b.label;
+    const bt = document.createElement('button'); bt.type = 'button'; bt.setAttribute('role', 'tab'); bt.textContent = b.label;
     bt.addEventListener('click', () => show(i)); tabs.appendChild(bt);
   });
+  ['showTop', 'showBot', 'showSilk'].forEach(id => document.getElementById(id).addEventListener('change', applyLayers));
+  function applyLayers() {
+    const svg = view.querySelector('svg'); if (!svg) return;
+    svg.querySelector('.top').style.display = document.getElementById('showTop').checked ? '' : 'none';
+    svg.querySelector('.bot').style.display = document.getElementById('showBot').checked ? '' : 'none';
+    svg.querySelectorAll('.silk').forEach(g => { g.style.display = document.getElementById('showSilk').checked ? '' : 'none'; });
+  }
 
   async function show(i) {
-    [...tabs.children].forEach((b, k) => b.setAttribute('aria-selected', k === i));
-    document.getElementById('pcbDownload').href = BOARDS[i].file;
+    current = i;
+    const b = BOARDS[i];
+    [...tabs.children].forEach((t, k) => t.setAttribute('aria-selected', k === i));
+    document.getElementById('dlBrd').href = 'hardware/pcb/' + b.id + '.brd';
+    document.getElementById('dlKicad').href = 'hardware/kicad/' + b.id + '.kicad_pcb';
+    document.getElementById('dlGerber').href = 'hardware/gerbers/' + b.id + '-gerbers.zip';
+    document.getElementById('dlOrig').href = 'hardware/tinkercad/' + b.id + '.brd';
+    document.getElementById('renderTop').src = 'images/pcb/' + b.id + '-top.png';
+    document.getElementById('renderBot').src = 'images/pcb/' + b.id + '-bottom.png';
     try {
       if (!cache[i]) {
-        const txt = await (await fetch(BOARDS[i].file)).text();
+        const txt = await (await fetch('hardware/pcb/' + b.id + '.brd')).text();
         cache[i] = new DOMParser().parseFromString(txt, 'application/xml');
       }
-      draw(cache[i]);
+      if (current === i) draw(cache[i]);
     } catch (e) {
-      view.innerHTML = '<p style="padding:16px">Could not load the board file. Open this page from the website (not as a local file).</p>';
+      view.innerHTML = '<p style="padding:16px">Could not load the board file. Open this page from the website, not as a local file.</p>';
     }
   }
 
@@ -193,66 +208,87 @@
     const outline = [...doc.querySelectorAll('plain > wire[layer="20"]')];
     const BW = Math.max(...outline.map(w => Math.max(num(w, 'x1'), num(w, 'x2'))));
     const BH = Math.max(...outline.map(w => Math.max(num(w, 'y1'), num(w, 'y2'))));
-    const pad = 4, Y = y => BH - y;
-    const svg = el('svg', { viewBox: `${-pad} ${-pad} ${BW + 2 * pad} ${BH + 2 * pad}`, role: 'img', 'aria-label': 'PCB layout' }, view);
-    el('rect', { x: 0, y: 0, width: BW, height: BH, fill: 'none', stroke: 'var(--axis)', 'stroke-width': .3, rx: 1 }, svg);
+    const m = 1.5, Y = y => BH - y;
+    const svg = el('svg', { viewBox: `${-m} ${-m} ${BW + 2 * m} ${BH + 2 * m}`, role: 'img', 'aria-label': 'Routed PCB layout' }, view);
+    el('rect', { x: 0, y: 0, width: BW, height: BH, fill: 'var(--board)', rx: 1.2 }, svg);
+    const gBot = el('g', { class: 'bot', opacity: .9 }, svg);
+    const gTop = el('g', { class: 'top', opacity: .95 }, svg);
+    const gSilk = el('g', { class: 'silk' }, svg);
+    const gPads = el('g', {}, svg);
+    const gParts = el('g', {}, svg);
+
+    // copper traces and vias
+    let nTop = 0, nBot = 0, nVia = 0, len = 0;
+    doc.querySelectorAll('signals > signal').forEach(sg => {
+      const net = sg.getAttribute('name');
+      sg.querySelectorAll('wire').forEach(w => {
+        const L = w.getAttribute('layer'); if (L !== '1' && L !== '16') return;
+        const ln = el('line', { x1: num(w, 'x1'), y1: Y(num(w, 'y1')), x2: num(w, 'x2'), y2: Y(num(w, 'y2')),
+          stroke: L === '1' ? 'var(--copper-top)' : 'var(--copper-bot)', 'stroke-width': num(w, 'width'), 'stroke-linecap': 'round' }, L === '1' ? gTop : gBot);
+        ln.dataset.net = net;
+        len += Math.hypot(num(w, 'x2') - num(w, 'x1'), num(w, 'y2') - num(w, 'y1'));
+        if (L === '1') nTop++; else nBot++;
+      });
+      sg.querySelectorAll('via').forEach(v => {
+        el('circle', { cx: num(v, 'x'), cy: Y(num(v, 'y')), r: num(v, 'diameter') / 2, fill: 'var(--pad)' }, gPads);
+        el('circle', { cx: num(v, 'x'), cy: Y(num(v, 'y')), r: num(v, 'drill') / 2, fill: '#222' }, gPads);
+        nVia++;
+      });
+    });
 
     const pkgs = {};
     doc.querySelectorAll('packages > package').forEach(p => { pkgs[p.getAttribute('name')] = p; });
     const tip = document.createElement('div'); tip.className = 'tip'; view.appendChild(tip);
     const rows = [];
-
     doc.querySelectorAll('elements > element').forEach(e => {
       const name = e.getAttribute('name'), value = e.getAttribute('value'), pk = e.getAttribute('package');
       const ex = num(e, 'x'), ey = num(e, 'y');
       const rot = parseFloat((e.getAttribute('rot') || 'R0').replace(/[^\d.]/g, '')) * Math.PI / 180;
       const T = (x, y) => [ex + x * Math.cos(rot) - y * Math.sin(rot), Y(ey + x * Math.sin(rot) + y * Math.cos(rot))];
-      const g = el('g', { class: 'part' }, svg);
       const pkg = pkgs[pk]; const xs = [], ys = [];
       if (pkg) {
         pkg.querySelectorAll('wire[layer="21"]').forEach(w => {
           const [a, b] = T(num(w, 'x1'), num(w, 'y1')), [c, d] = T(num(w, 'x2'), num(w, 'y2'));
-          el('line', { x1: a, y1: b, x2: c, y2: d, stroke: 'var(--silk)', 'stroke-width': Math.max(.15, num(w, 'width')), 'stroke-linecap': 'round' }, g);
+          el('line', { x1: a, y1: b, x2: c, y2: d, stroke: 'var(--silk)', 'stroke-width': Math.max(.15, num(w, 'width')), 'stroke-linecap': 'round' }, gSilk);
           xs.push(a, c); ys.push(b, d);
         });
         pkg.querySelectorAll('circle[layer="21"]').forEach(c => {
           const [a, b] = T(num(c, 'x'), num(c, 'y')); const r = num(c, 'radius');
-          el('circle', { cx: a, cy: b, r, fill: num(c, 'width') ? 'none' : 'var(--silk)', stroke: 'var(--silk)', 'stroke-width': Math.max(.12, num(c, 'width')) }, g);
+          el('circle', { cx: a, cy: b, r, fill: num(c, 'width') ? 'none' : 'var(--silk)', stroke: 'var(--silk)', 'stroke-width': Math.max(.12, num(c, 'width')) }, gSilk);
           xs.push(a - r, a + r); ys.push(b - r, b + r);
         });
         pkg.querySelectorAll('pad').forEach(p => {
           const [a, b] = T(num(p, 'x'), num(p, 'y'));
-          el('circle', { cx: a, cy: b, r: num(p, 'diameter') / 2, fill: 'var(--copper)' }, g);
-          el('circle', { cx: a, cy: b, r: num(p, 'drill') / 2, fill: 'var(--board)' }, g);
+          el('circle', { cx: a, cy: b, r: num(p, 'diameter') / 2, fill: 'var(--pad)' }, gPads);
+          el('circle', { cx: a, cy: b, r: num(p, 'drill') / 2, fill: '#222' }, gPads);
           xs.push(a); ys.push(b);
         });
       }
       if (xs.length) {
         const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
-        el('rect', { class: 'body', x: x0 - .8, y: y0 - .8, width: x1 - x0 + 1.6, height: y1 - y0 + 1.6, rx: .8, fill: 'transparent', stroke: 'none' }, g);
-        const t = el('text', { x: (x0 + x1) / 2, y: y0 - 1.3, 'text-anchor': 'middle', 'font-size': 2 }, g);
-        t.textContent = name;
+        const g = el('g', { class: 'part' }, gParts);
+        el('rect', { class: 'body', x: x0 - .8, y: y0 - .8, width: x1 - x0 + 1.6, height: y1 - y0 + 1.6, rx: .6, fill: 'transparent', stroke: 'none' }, g);
+        el('text', { x: (x0 + x1) / 2, y: y0 - 1.1, 'text-anchor': 'middle', 'font-size': 1.7, class: 'silk' }, gSilk).textContent = name;
+        const kind = KIND[pk] || pk;
+        g.addEventListener('pointermove', ev => {
+          const r = view.getBoundingClientRect();
+          tip.innerHTML = `<b>${name}</b><br>${kind}<br>${nice(value)}`;
+          tip.style.display = 'block';
+          tip.style.left = Math.max(0, Math.min(r.width - tip.offsetWidth, ev.clientX - r.left + 14)) + 'px';
+          tip.style.top = Math.max(0, ev.clientY - r.top - 10) + 'px';
+        });
+        g.addEventListener('pointerleave', () => { tip.style.display = 'none'; });
+        rows.push([name, kind, nice(value)]);
       }
-      const kind = KIND[pk] || pk;
-      g.addEventListener('pointermove', ev => {
-        const r = view.getBoundingClientRect();
-        tip.innerHTML = `<b>${name}</b><br>${kind}<br>${nice(value)}`;
-        tip.style.display = 'block';
-        tip.style.left = Math.min(r.width - tip.offsetWidth, ev.clientX - r.left + 14) + 'px';
-        tip.style.top = Math.max(0, ev.clientY - r.top - 10) + 'px';
-      });
-      g.addEventListener('pointerleave', () => { tip.style.display = 'none'; });
-      rows.push([name, kind, nice(value)]);
     });
 
-    // airwires: unrouted connections between pads
-    doc.querySelectorAll('signals > signal > wire[layer="19"]').forEach(w => {
-      el('line', { x1: num(w, 'x1'), y1: Y(num(w, 'y1')), x2: num(w, 'x2'), y2: Y(num(w, 'y2')), stroke: 'var(--air)', 'stroke-width': .25, 'stroke-dasharray': '.8 .6', 'pointer-events': 'none' }, svg);
-    });
-
+    document.getElementById('pcbStats').textContent =
+      `Board ${BW} × ${BH} mm · ${rows.length} parts · ${nTop} top and ${nBot} bottom trace segments · ` +
+      `${nVia} vias · ${Math.round(len)} mm of copper trace`;
     rows.sort((a, b) => a[0].localeCompare(b[0], undefined, { numeric: true }));
     document.getElementById('pcbParts').innerHTML = '<tr><th>Ref</th><th>Part</th><th>Value</th></tr>' +
       rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('');
+    applyLayers();
   }
   show(0);
 })();
