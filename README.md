@@ -65,6 +65,11 @@ different mode, plus some logic gates:
 | 3: Bistable 555 (auto/manual switch) | [Open](https://www.tinkercad.com/things/8pzGGpFieEt-bistable-555-timer-8-bit-computer-clock-part-3) | [03-bistable.md](docs/clock/03-bistable.md) |
 | Clock-select logic | — | [04-clock-logic.md](docs/clock/04-clock-logic.md) |
 
+> **Note on component values:** the worked calculations use the reference
+> values from Ben Eater's clock module (for example R1 = 1 kΩ, a 1 MΩ pot and
+> C = 1 µF). If a Tinkercad circuit uses different parts, plug its values into
+> the same formulas.
+
 ## Background reading in this repo
 
 - [How the 555 timer works inside](docs/basics/555-timer.md)
