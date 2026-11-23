@@ -1,74 +1,99 @@
-# Part 3: Bistable 555 (debounced auto/manual switch)
+# Part 3: Selecting the clock source (auto / manual)
 
-**Tinkercad:** [Part 3](https://www.tinkercad.com/things/8pzGGpFieEt-bistable-555-timer-8-bit-computer-clock-part-3)
+**Tinkercad:** [Part 3](https://www.tinkercad.com/things/8pzGGpFieEt-bistable-555-timer-8-bit-computer-clock-part-3) ·
+Board file: [part3-clock-select.brd](../../hardware/tinkercad/part3-clock-select.brd)
 
-## The problem
+![Part 3 breadboard](../../images/part3-clock-select.png)
 
-We need a switch that picks between the **automatic** clock (astable) and the
-**manual** step button (monostable). A plain slide switch bounces too, and a
-bounce while switching modes can sneak in extra clock edges.
+Part 3 puts the two earlier circuits on one breadboard and adds a switch to
+choose which one drives the clock:
 
-## The fix: bistable mode (a debounced latch)
+- **U2: astable 555** from [Part 1b](01-astable.md#part-1b-adjustable-speed)
+  (R1 1 kΩ, R3 1 kΩ + RPOT2 1 MΩ, C3 1 µF), which is the automatic clock (red
+  LED D1).
+- **U1: monostable 555** from [Part 2](02-monostable.md) (R6 1 MΩ, C5 0.1 µF,
+  button S1), which is the manual single-step (yellow LED D2).
+- **S2: SPDT toggle switch** that picks one of the two outputs.
+- **D3 + R7 (yellow LED + 220 Ω)** on the switch's common pin, which shows
+  the selected clock.
 
-In **bistable** mode the 555 is just its internal SR flip-flop. It has **two
-stable states** and stays in whichever one it was put into. No timing
-resistor or capacitor is involved.
+## Circuit as built
 
-- **TRIG (pin 2) pulled LOW → SET**, output HIGH
-- **RST (pin 4) pulled LOW → RESET**, output LOW
+```
+  U2 (astable)  pin 3 ──┬──▶|D1 red──[R2 220]── GND
+                        │
+                        └──── S2 pin 1 ─┐
+                                        ├─ S2 pin 2 (common) ──▶|D3 yellow──[R7 220]── GND
+                        ┌──── S2 pin 3 ─┘                         ▲
+                        │                                     "CLK" out
+  U1 (monostable) pin 3 ┴──▶|D2 yellow──[R5 220]── GND
+```
 
-Because the flip-flop latches on the first contact, any bounce afterwards
-only tries to set it to the state it's already in, so nothing happens.
+| Switch position | Common pin connected to | D3 shows | Mode |
+|-----------------|------------------------|----------|------|
+| Toward pin 1 | U2 output | Free-running pulses | **Automatic** |
+| Toward pin 3 | U1 output | One pulse per button press | **Manual step** |
 
-## Circuit
+### Shared parts
+
+| Part | Value | Role |
+|------|-------|------|
+| C1 | 0.1 µF | U2 pin 5 (control voltage) filter |
+| C6 | 100 nF | U1 pin 5 filter |
+| C2, C4 | 0.1 µF | Power-rail decoupling |
+| R8 | 220 Ω | Both leads sit on the same node, so it carries no current and can be removed |
+
+### Calculations
+
+| Quantity | Working | Result |
+|----------|---------|--------|
+| Auto clock range | from Part 1b | **0.72 Hz to 480 Hz** |
+| Manual pulse width | 1.1 × 1 MΩ × 0.1 µF | **110 ms** |
+| D3 current | (3.3 − 2.0) V ÷ 220 Ω | ≈ 5.9 mA |
+| Load on each 555 output | D1/D2 + D3 | ≈ 12 mA, far below the 555's 200 mA limit |
+
+## The catch: the switch itself bounces
+
+The push button is debounced by the monostable, but the **toggle switch
+isn't**. As S2 moves between positions, its contact bounces and briefly
+connects and disconnects the clock line, which can produce a few extra
+rising edges. Each one would clock the computer.
+
+### The fix: a bistable 555 (next step)
+
+Ben Eater's design solves this with a **third 555 in bistable mode**. That's
+just the chip's internal SR flip-flop, with no timing R or C:
 
 ```
  +5V ──┬──────────┬──────────┐
        │          │          │
-    [1k R_a]   [1k R_b]    pin 8 (VCC)
+     [1k]       [1k]       pin 8 (VCC)
        │          │
        ├─ pin 2   ├─ pin 4
        │ (TRIG)   │ (RST)
-       │          │
-       o          o      ← SPDT slide switch throws
+       o          o      ← SPDT switch throws
         \        /
          \  ●   /        ← common pin goes to GND
             │
- GND ───────┴──── pin 1
-                  pin 6 (THRES) ── GND   (never resets on its own)
-                  pin 5 ──[10 nF]── GND
-                  pin 3 ── SEL output ──[220 Ω]──▶|── GND
+ GND ───────┴──── pin 1,  pin 6 (THRES) ── GND
+                  pin 3 ── SEL (select signal)
 ```
 
-| Part | Value | Role |
-|------|-------|------|
-| R_a | 1 kΩ | Pull-up on TRIG |
-| R_b | 1 kΩ | Pull-up on RST |
-| SW | SPDT slide switch | Grounds either TRIG or RST |
-| C2 | 10 nF | Control-pin noise filter |
-| Pin 6 | tied to GND | Keeps the threshold comparator from ever resetting the latch |
-| Pin 7 | unconnected | Not needed |
+- **TRIG pulled LOW → SET**, so SEL goes HIGH (manual).
+- **RST pulled LOW → RESET**, so SEL goes LOW (auto).
+- While the contact bounces, both pins return HIGH for an instant, and the
+  flip-flop just **holds** its state. The first contact latches it and the
+  bounces after that do nothing.
 
-## Truth table
-
-| Switch position | TRIG | RST | Output (SEL) | Mode |
-|-----------------|------|-----|--------------|------|
-| Toward TRIG | LOW | HIGH | **HIGH** | Manual (single-step) |
-| Toward RST | HIGH | LOW | **LOW** | Automatic (astable) |
-| Mid-travel / bouncing | HIGH | HIGH | **holds last value** | — |
-
-## Calculations
+The switch then only drives SEL, and SEL picks the clock source through
+logic gates, with no clock signal running through the mechanical contacts.
+See [04-clock-logic.md](04-clock-logic.md).
 
 | Quantity | Working | Result |
 |----------|---------|--------|
-| Current through a pull-up when its pin is grounded | 5 V ÷ 1 kΩ | **5 mA** |
-| Power in that resistor | 5 V × 5 mA | 25 mW (a ¼ W resistor is fine) |
-| TRIG threshold | ⅓ × 5 V | 1.67 V, and grounded is 0 V, well below it |
-| RST threshold (datasheet) | ≈ 0.7 V | grounded is 0 V, well below it |
-
-**Why 1 kΩ?** It's low enough to give the pins a solid HIGH and reject noise,
-and high enough that the current wasted when the switch grounds a pin is
-small.
+| Pull-up current when grounded | 5 V ÷ 1 kΩ | 5 mA |
+| Power per pull-up | 5 V × 5 mA | 25 mW (¼ W resistor is fine) |
+| TRIG threshold | ⅓ × 5 V | 1.67 V, and grounded is 0 V |
 
 ---
-*Design credit: Ben Eater, "Bistable 555 timer" (8-bit computer clock module).*
+*Design credit: Ben Eater, 8-bit computer clock module ("Bistable 555 timer" video).*

@@ -1,4 +1,8 @@
-# Part 4: Clock select and halt logic
+# Part 4: Clock select and halt logic (next step)
+
+> **Status:** not built yet. In my current Tinkercad build (Part 3) an SPDT
+> toggle switches the clock directly. This page explains the gate-based
+> version from Ben Eater's design, which replaces that switch.
 
 The three 555 outputs are combined into one clock with a few logic gates:
 

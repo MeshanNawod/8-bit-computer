@@ -44,7 +44,7 @@ modules to *read* from it.
 
 | # | Module | Main ICs | Status | Docs |
 |---|--------|----------|--------|------|
-| 1 | Clock | NE555 ×3, 74LS04, 74LS08, 74LS32 | ✅ Simulated | [Clock docs](docs/clock/README.md) |
+| 1 | Clock | LM555 ×3, 74LS04, 74LS08, 74LS32 | 🟡 Astable, monostable and select switch simulated; bistable + logic next | [Clock docs](docs/clock/README.md) |
 | 2 | Registers (A, B, IR) | 74LS173, 74LS245 | ⏳ Planned | — |
 | 3 | ALU (add/subtract) | 74LS283, 74LS86 | ⏳ Planned | — |
 | 4 | RAM + memory address register | 74LS189, 74LS157, 74LS173 | ⏳ Planned | — |
@@ -52,23 +52,23 @@ modules to *read* from it.
 | 6 | Output display | 28C16 EEPROM, 74LS273, 7-segment | ⏳ Planned | — |
 | 7 | Control logic | 28C16 EEPROM ×2, 74LS161, 74LS138 | ⏳ Planned | — |
 
-## Module 1: Clock (done)
+## Module 1: Clock
 
-The clock is the computer's heartbeat. It has three 555 timers, each wired in a
-different mode, plus some logic gates:
+![Clock module, Part 3 in Tinkercad](images/part3-clock-select.png)
 
-| Part | Tinkercad | Write-up |
-|------|-----------|----------|
-| 1a: Astable 555 (free-running clock) | [Open](https://www.tinkercad.com/things/l30rW27OBnZ-astable-555-timer-8-bit-computer-clock-part-1-a) | [01-astable.md](docs/clock/01-astable.md) |
-| 1b: Astable 555 (adjustable speed) | [Open](https://www.tinkercad.com/things/5Rx0vSOaq2a-astable-555-timer-8-bit-computer-clock-part-1b-) | [01-astable.md](docs/clock/01-astable.md#part-1b-adjustable-speed) |
-| 2: Monostable 555 (debounced step button) | [Open](https://www.tinkercad.com/things/hLZbnoHB4L6-monostable-555-timer-8-bit-computer-clock-part-2) | [02-monostable.md](docs/clock/02-monostable.md) |
-| 3: Bistable 555 (auto/manual switch) | [Open](https://www.tinkercad.com/things/8pzGGpFieEt-bistable-555-timer-8-bit-computer-clock-part-3) | [03-bistable.md](docs/clock/03-bistable.md) |
-| Clock-select logic | — | [04-clock-logic.md](docs/clock/04-clock-logic.md) |
+The clock is the computer's heartbeat. It has an adjustable free-running
+clock, a debounced single-step button, and a switch to choose between them.
 
-> **Note on component values:** the worked calculations use the reference
-> values from Ben Eater's clock module (for example R1 = 1 kΩ, a 1 MΩ pot and
-> C = 1 µF). If a Tinkercad circuit uses different parts, plug its values into
-> the same formulas.
+| Part | Key values | Result | Tinkercad | Write-up |
+|------|-----------|--------|-----------|----------|
+| 1a: Astable 555 | R1 1 kΩ, R2 100 kΩ, C 1 µF | **7.18 Hz**, 50.2 % duty | [Open](https://www.tinkercad.com/things/l30rW27OBnZ-astable-555-timer-8-bit-computer-clock-part-1-a) | [01-astable.md](docs/clock/01-astable.md) |
+| 1b: Astable + pot | R1 1 kΩ, R2 1 kΩ + 1 MΩ pot, C 1 µF | **0.72 to 480 Hz** | [Open](https://www.tinkercad.com/things/5Rx0vSOaq2a-astable-555-timer-8-bit-computer-clock-part-1b-) | [01-astable.md](docs/clock/01-astable.md#part-1b-adjustable-speed) |
+| 2: Monostable 555 | R 1 MΩ, C 0.1 µF | **110 ms** pulse per press | [Open](https://www.tinkercad.com/things/hLZbnoHB4L6-monostable-555-timer-8-bit-computer-clock-part-2) | [02-monostable.md](docs/clock/02-monostable.md) |
+| 3: Clock select | SPDT switch between 1b and 2 | Auto / manual | [Open](https://www.tinkercad.com/things/8pzGGpFieEt-bistable-555-timer-8-bit-computer-clock-part-3) | [03-bistable.md](docs/clock/03-bistable.md) |
+| 4: Select + halt logic | 74LS04/08/32 | Next step | — | [04-clock-logic.md](docs/clock/04-clock-logic.md) |
+
+All values come from my Tinkercad board exports in
+[`hardware/tinkercad/`](hardware/tinkercad).
 
 ## Background reading in this repo
 
@@ -86,6 +86,8 @@ different mode, plus some logic gates:
 │   ├── basics/              ← 555 internals, transistors, LEDs
 │   ├── clock/               ← Module 1 write-ups and calculations
 │   └── parts-list.md
+├── hardware/tinkercad/      ← Eagle .brd exports of each Tinkercad circuit
+├── images/                  ← breadboard screenshots
 └── LICENSE
 ```
 

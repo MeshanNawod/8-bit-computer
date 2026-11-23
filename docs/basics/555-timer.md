@@ -20,7 +20,7 @@ is inside it makes every formula in this repo easy to follow.
 | 2 | TRIG (trigger) | When this drops **below ⅓ VCC**, the output goes HIGH |
 | 3 | OUT | Output, about VCC − 1.7 V when HIGH and about 0.1 V when LOW |
 | 4 | RST (reset) | Active LOW. Pulling it to 0 V forces the output LOW. Tie it to VCC when you don't use it |
-| 5 | CTRL (control voltage) | Gives you access to the ⅔ VCC reference point. Put a 10 nF capacitor from here to GND to filter out noise |
+| 5 | CTRL (control voltage) | Gives you access to the ⅔ VCC reference point. Put a 0.01 to 0.1 µF capacitor from here to GND to filter out noise (this build uses 0.1 µF) |
 | 6 | THRES (threshold) | When this rises **above ⅔ VCC**, the output goes LOW |
 | 7 | DISCH (discharge) | An open-collector transistor that connects to GND whenever the output is LOW |
 | 8 | VCC | +5 V (works from 4.5 to 16 V) |
