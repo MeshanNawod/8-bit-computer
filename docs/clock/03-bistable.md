@@ -1,99 +1,93 @@
-# Part 3: Selecting the clock source (auto / manual)
+# Part 3: Choosing auto or manual, and the bistable 555
 
-**Tinkercad:** [Part 3](https://www.tinkercad.com/things/8pzGGpFieEt-bistable-555-timer-8-bit-computer-clock-part-3) ·
-Board file: [part3-clock-select.brd](../../hardware/tinkercad/part3-clock-select.brd)
+Part 3 was built in three steps:
 
-![Part 3 breadboard](../../images/part3-clock-select.png)
+| Step | What it is | Tinkercad | Board file |
+|------|------------|-----------|------------|
+| 3 | Astable + monostable, chosen by a plain slide switch | [Open](https://www.tinkercad.com/things/8pzGGpFieEt-bistable-555-timer-8-bit-computer-clock-part-3b) | [part3-select-switch.brd](../../hardware/tinkercad/part3-select-switch.brd) |
+| 3C | A bistable 555 on its own | [Open](https://www.tinkercad.com/things/8nKWwN5A36f-monostable-555-timer-8-bit-computer-clock-part-3c) | [part3c-bistable.brd](../../hardware/tinkercad/part3c-bistable.brd) |
+| 3B | All three 555 timers together | [Open](https://www.tinkercad.com/things/2x38PAtikeI-bistable-555-timer-8-bit-computer-clock-part-3b) | [part3b-three-555.brd](../../hardware/tinkercad/part3b-three-555.brd) |
 
-Part 3 puts the two earlier circuits on one breadboard and adds a switch to
-choose which one drives the clock:
+## Part 3: plain select switch
 
-- **U2: astable 555** from [Part 1b](01-astable.md#part-1b-adjustable-speed)
-  (R1 1 kΩ, R3 1 kΩ + RPOT2 1 MΩ, C3 1 µF), which is the automatic clock (red
-  LED D1).
-- **U1: monostable 555** from [Part 2](02-monostable.md) (R6 1 MΩ, C5 0.1 µF,
-  button S1), which is the manual single-step (yellow LED D2).
-- **S2: SPDT toggle switch** that picks one of the two outputs.
-- **D3 + R7 (yellow LED + 220 Ω)** on the switch's common pin, which shows
-  the selected clock.
+![Part 3 breadboard](../../images/part3-select-switch.png)
 
-## Circuit as built
+The astable from [Part 1B](01-astable.md#part-1b-adjustable-speed) and the
+monostable from [Part 2A](02-monostable.md) on one board. An SPDT slide switch
+(S2) connects either output to a yellow LED (D3 + R7 220 Ω), which shows the
+selected clock.
 
-```
-  U2 (astable)  pin 3 ──┬──▶|D1 red──[R2 220]── GND
-                        │
-                        └──── S2 pin 1 ─┐
-                                        ├─ S2 pin 2 (common) ──▶|D3 yellow──[R7 220]── GND
-                        ┌──── S2 pin 3 ─┘                         ▲
-                        │                                     "CLK" out
-  U1 (monostable) pin 3 ┴──▶|D2 yellow──[R5 220]── GND
-```
+| Switch position | Selected clock |
+|-----------------|----------------|
+| Pin 1 side | Astable (automatic) |
+| Pin 3 side | Monostable (step button) |
 
-| Switch position | Common pin connected to | D3 shows | Mode |
-|-----------------|------------------------|----------|------|
-| Toward pin 1 | U2 output | Free-running pulses | **Automatic** |
-| Toward pin 3 | U1 output | One pulse per button press | **Manual step** |
+**The problem:** the clock signal itself passes through the switch's
+contacts. When you slide the switch, those contacts bounce, which can make
+extra clock edges. The fix is the bistable 555 below.
 
-### Shared parts
+R8 (220 Ω) in this file has both leads on the same row, so it carries no
+current and can be removed.
 
-| Part | Value | Role |
-|------|-------|------|
-| C1 | 0.1 µF | U2 pin 5 (control voltage) filter |
-| C6 | 100 nF | U1 pin 5 filter |
-| C2, C4 | 0.1 µF | Power-rail decoupling |
-| R8 | 220 Ω | Both leads sit on the same node, so it carries no current and can be removed |
+## Part 3C: bistable 555
+
+![Part 3C breadboard](../../images/part3c-bistable.png)
+
+In **bistable** mode the 555 is used only as its internal SR flip-flop: no
+timing resistor or capacitor. It has two stable states and stays in
+whichever one it was last put into.
+
+### Connections (from the Tinkercad export)
+
+| 555 pin | Connected to |
+|---------|--------------|
+| 1 GND | Ground |
+| 2 TRIG | R8 (1 kΩ) to +5 V, and slide switch S2 pin 3 |
+| 3 OUT | Yellow LED D3, then R7 (220 Ω) to ground |
+| 4 RESET | R9 (1 kΩ) to +5 V, and S2 pin 1 |
+| 5 CTRL | C7 (0.1 µF) to ground |
+| 6 THRES | Ground (so it never resets by itself) |
+| 7 DISCH | Not used |
+| 8 VCC | +5 V |
+| S2 middle pin | Ground |
+
+### Truth table
+
+| Switch connects ground to | TRIG | RESET | Output |
+|---------------------------|------|-------|--------|
+| Pin 3 → TRIG | LOW | HIGH | **HIGH** (set) |
+| Pin 1 → RESET | HIGH | LOW | **LOW** (reset) |
+| Nothing (mid-travel or bouncing) | HIGH | HIGH | **keeps last value** |
+
+The first contact latches the flip-flop. Bounces after that only pull the
+same pin LOW again, which changes nothing, so the output switches **exactly
+once**.
 
 ### Calculations
 
 | Quantity | Working | Result |
 |----------|---------|--------|
-| Auto clock range | from Part 1b | **0.72 Hz to 480 Hz** |
-| Manual pulse width | 1.1 × 1 MΩ × 0.1 µF | **110 ms** |
-| D3 current | (3.3 − 2.0) V ÷ 220 Ω | ≈ 5.9 mA |
-| Load on each 555 output | D1/D2 + D3 | ≈ 12 mA, far below the 555's 200 mA limit |
-
-## The catch: the switch itself bounces
-
-The push button is debounced by the monostable, but the **toggle switch
-isn't**. As S2 moves between positions, its contact bounces and briefly
-connects and disconnects the clock line, which can produce a few extra
-rising edges. Each one would clock the computer.
-
-### The fix: a bistable 555 (next step)
-
-Ben Eater's design solves this with a **third 555 in bistable mode**. That's
-just the chip's internal SR flip-flop, with no timing R or C:
-
-```
- +5V ──┬──────────┬──────────┐
-       │          │          │
-     [1k]       [1k]       pin 8 (VCC)
-       │          │
-       ├─ pin 2   ├─ pin 4
-       │ (TRIG)   │ (RST)
-       o          o      ← SPDT switch throws
-        \        /
-         \  ●   /        ← common pin goes to GND
-            │
- GND ───────┴──── pin 1,  pin 6 (THRES) ── GND
-                  pin 3 ── SEL (select signal)
-```
-
-- **TRIG pulled LOW → SET**, so SEL goes HIGH (manual).
-- **RST pulled LOW → RESET**, so SEL goes LOW (auto).
-- While the contact bounces, both pins return HIGH for an instant, and the
-  flip-flop just **holds** its state. The first contact latches it and the
-  bounces after that do nothing.
-
-The switch then only drives SEL, and SEL picks the clock source through
-logic gates, with no clock signal running through the mechanical contacts.
-See [04-clock-logic.md](04-clock-logic.md).
-
-| Quantity | Working | Result |
-|----------|---------|--------|
 | Pull-up current when grounded | 5 V ÷ 1 kΩ | 5 mA |
-| Power per pull-up | 5 V × 5 mA | 25 mW (¼ W resistor is fine) |
-| TRIG threshold | ⅓ × 5 V | 1.67 V, and grounded is 0 V |
+| Power in that pull-up | 5 V × 5 mA | 25 mW (a ¼ W resistor is fine) |
+| TRIG threshold | ⅓ × 5 V | 1.67 V, and the grounded pin is at 0 V |
+| LED current | (≈3.3 − 2.0) V ÷ 220 Ω | ≈ 5.9 mA |
+
+## Part 3B: all three timers
+
+![Part 3B breadboard](../../images/part3b-three-555.png)
+
+Part 3B places the astable (U2), monostable (U1) and bistable (U3) side by
+side on one breadboard, sharing power and ground. Each has its own LED:
+
+| Timer | Values | LED shows |
+|-------|--------|-----------|
+| U2 astable | R1 1 kΩ, R3 1 kΩ + RPOT2 1 MΩ, C3 1 µF | Red D1: free-running clock, 0.72 to 480 Hz |
+| U1 monostable | R6 1 MΩ, C5 0.1 µF, button pull-up R4 1 kΩ | Yellow D2: 110 ms pulse per press |
+| U3 bistable | Pull-ups R8, R9 1 kΩ, switch S2 | Yellow D3: mode select (HIGH or LOW) |
+
+All three CTRL pins have 0.1 µF to ground here. The three outputs are not
+combined yet. That's the job of the logic gates in
+[Part 4A](04-clock-logic.md).
 
 ---
 *Design credit: Ben Eater, 8-bit computer clock module ("Bistable 555 timer" video).*

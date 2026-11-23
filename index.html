@@ -81,24 +81,6 @@
   .tip { position: absolute; pointer-events: none; background: #fff; color: var(--text); border: 1px solid #ddd; border-radius: 4px; padding: 6px 10px; font-size: .85rem; box-shadow: 0 2px 10px rgba(0,0,0,.1); white-space: nowrap; display: none; z-index: 3; }
   .tip i { display: inline-block; width: 10px; height: 3px; border-radius: 2px; margin-right: 6px; vertical-align: middle; }
 
-  /* pcb */
-  .pcb-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
-  .pcb-tabs button { font: inherit; font-size: .9rem; padding: 6px 12px; border-radius: 4px; cursor: pointer; border: 1px solid #ccc; background: #fff; color: var(--text); }
-  .pcb-tabs button[aria-selected="true"] { background: var(--text); border-color: var(--text); color: #fff; }
-  .layer-toggle { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: .9rem; margin: 0 0 10px; color: var(--muted); }
-  .layer-toggle label { display: inline-flex; align-items: center; gap: 6px; color: var(--text); font-size: .9rem; cursor: pointer; }
-  .layer-toggle input { width: auto; margin: 0; }
-  .pcb { position: relative; background: #fafafa; border: 1px solid var(--line); padding: 10px; }
-  .pcb svg { width: 100%; height: auto; display: block; }
-  .pcb .part:hover .body { stroke: #fff; stroke-width: .3; }
-  .pcb text { font-family: inherit; fill: var(--silk); }
-  .pcb-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: .85rem; color: var(--muted); margin: 10px 0 14px; }
-  .pcb-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 2px; vertical-align: -2px; margin-right: 6px; }
-  .renders { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
-  .renders img { width: 100%; border: 1px solid var(--line); display: block; }
-  .renders span { font-size: .85rem; color: var(--muted); }
-  @media (max-width: 560px) { .renders { grid-template-columns: 1fr; } }
-
   footer { margin: 56px 0 0; padding: 24px 0 40px; border-top: 1px solid var(--line); color: var(--muted); font-size: .9rem; }
 </style>
 </head>
@@ -109,7 +91,6 @@
   <nav class="menu">
     <a href="#how">How it works</a>
     <a href="#clock">Clock</a>
-    <a href="#pcb">PCB</a>
     <a href="#calc">Calculator</a>
     <a href="#links">Files</a>
   </nav>
@@ -117,7 +98,7 @@
 
 <header class="wrap hero">
   <h1>Build an 8-bit computer from logic chips</h1>
-  <p class="lead">An 8-bit computer made from 555 timers, 74LS logic chips and transistors, built one module at a time. Each module is simulated in Tinkercad, laid out as a real PCB, and explained with the maths behind it.</p>
+  <p class="lead">An 8-bit computer made from 555 timers, logic chips and transistors, built one module at a time. Each module is simulated in Tinkercad and explained with the maths behind it.</p>
   <div class="credit">
     Based on <strong>Ben Eater's</strong> 8-bit breadboard computer. The design and module breakdown are his. Watch the original series at
     <a href="https://eater.net/8bit">eater.net/8bit</a>.
@@ -144,7 +125,7 @@
   <div class="card scroll">
     <table>
       <tr><th>Module</th><th>Main chips</th><th>Status</th></tr>
-      <tr><td>1. Clock</td><td>555 timers, 74LS04/08/32</td><td><span class="done">● In progress</span></td></tr>
+      <tr><td>1. Clock</td><td>555 timers, 74HC04/08/32</td><td><span class="done">● Simulated (parts 1A to 4A)</span></td></tr>
       <tr><td>2. Registers</td><td>74LS173, 74LS245</td><td>Planned</td></tr>
       <tr><td>3. ALU</td><td>74LS283, 74LS86</td><td>Planned</td></tr>
       <tr><td>4. RAM</td><td>74LS189, 74LS157</td><td>Planned</td></tr>
@@ -157,12 +138,12 @@
 
 <section id="clock">
   <h2>Module 1: The clock</h2>
-  <p>The clock needs to do two things: <strong>run on its own</strong> at a speed you can adjust, and <strong>step once</strong> each time you press a button. Both use a 555 timer chip.</p>
+  <p>The clock has to <strong>run on its own</strong> at an adjustable speed, <strong>step once</strong> per button press, <strong>switch</strong> between the two cleanly, and <strong>halt</strong> on command. It was built in seven steps, from one 555 timer to the full clock with logic chips.</p>
 
   <div class="card">
-    <h3>Part 1a: Astable 555 <span class="tag done">Done</span></h3>
+    <h3>Part 1A: Astable 555 <span class="tag done">Done</span></h3>
     <p>The 555 switches its output on and off by itself, forever. A capacitor charges through two resistors until it reaches ⅔ of the supply voltage, then discharges until it falls to ⅓, over and over.</p>
-    <img src="images/part1a-astable.png" alt="Part 1a breadboard in Tinkercad" loading="lazy">
+    <img src="images/part1a-astable.png" alt="Part 1A breadboard in Tinkercad" loading="lazy">
     <p><strong>Parts:</strong> R1 = 1 kΩ, R2 = 100 kΩ, C = 1 µF</p>
     <div class="formula">f = 1.44 ÷ ((R1 + 2·R2) × C)<br>  = 1.44 ÷ ((1 000 + 200 000) × 0.000001)<br>  = 7.18 Hz</div>
     <div class="result">
@@ -179,9 +160,9 @@
   </div>
 
   <div class="card">
-    <h3>Part 1b: Adjustable speed <span class="tag done">Done</span></h3>
+    <h3>Part 1B: Adjustable speed <span class="tag done">Done</span></h3>
     <p>R2 becomes a <strong>1 kΩ resistor plus a 1 MΩ knob</strong>. Turning the knob changes how long the capacitor takes to charge, which changes the speed. The extra 1 kΩ sets a safe top speed when the knob is at zero.</p>
-    <img src="images/part1b-astable-pot.png" alt="Part 1b breadboard with potentiometer" loading="lazy">
+    <img src="images/part1b-astable-pot.png" alt="Part 1B breadboard with potentiometer" loading="lazy">
     <div class="scroll"><table>
       <tr><th>Knob</th><th>R2</th><th>Speed</th></tr>
       <tr><td>Maximum</td><td>1.001 MΩ</td><td><strong>0.72 Hz</strong> (slow, easy to watch)</td></tr>
@@ -197,13 +178,13 @@
   </div>
 
   <div class="card">
-    <h3>Part 2: Single-step button <span class="tag done">Done</span></h3>
+    <h3>Part 2A: Single-step button <span class="tag done">Done</span></h3>
     <p>A push button's metal contacts <strong>bounce</strong>, so one press can look like several. The 555 in <em>monostable</em> mode fixes this: a press starts one clean pulse of fixed length, and bounces during that pulse are ignored.</p>
-    <img src="images/part2-monostable.png" alt="Part 2 breadboard with push button" loading="lazy">
+    <img src="images/part2a-monostable.png" alt="Part 2A breadboard with push button" loading="lazy">
     <p><strong>Parts:</strong> R = 1 MΩ, C = 0.1 µF, 1 kΩ pull-up on the button</p>
     <div class="formula">t = 1.1 × R × C<br>  = 1.1 × 1 000 000 × 0.0000001<br>  = 0.11 s</div>
     <div class="result">
-      <div><b>110 ms</b><span>pulse per press</span></div>
+      <div><b>110 ms</b><span>pulse length</span></div>
       <div><b>≈ 10 ms</b><span>typical bounce</span></div>
       <div><b>1</b><span>pulse per press</span></div>
     </div>
@@ -211,69 +192,50 @@
       <figcaption><b>One bouncy button press</b> The button (aqua) bounces several times, but the output (orange) gives one clean 110 ms pulse. It ends when the capacitor (blue) reaches ⅔ VCC.</figcaption>
       <div id="chartMono"></div>
     </figure>
-    <p><a href="https://www.tinkercad.com/things/hLZbnoHB4L6-monostable-555-timer-8-bit-computer-clock-part-2">Open in Tinkercad</a> · <a href="https://github.com/MeshanNawod/8-bit-computer/blob/main/docs/clock/02-monostable.md">Full write-up</a></p>
+    <p><a href="https://www.tinkercad.com/things/hLZbnoHB4L6-monostable-555-timer-8-bit-computer-clock-part-2a">Open in Tinkercad</a> · <a href="https://github.com/MeshanNawod/8-bit-computer/blob/main/docs/clock/02-monostable.md">Full write-up</a></p>
   </div>
 
   <div class="card">
-    <h3>Part 3: Choosing auto or manual <span class="tag done">Done</span></h3>
-    <p>Both circuits on one board. A <strong>toggle switch</strong> picks which one drives the clock: the free-running astable (red LED) or the step button (yellow LED). A third LED shows the selected clock.</p>
-    <img src="images/part3-clock-select.png" alt="Part 3 breadboard with both 555 timers and a toggle switch" loading="lazy">
-    <p><a href="https://www.tinkercad.com/things/8pzGGpFieEt-bistable-555-timer-8-bit-computer-clock-part-3">Open in Tinkercad</a> · <a href="https://github.com/MeshanNawod/8-bit-computer/blob/main/docs/clock/03-bistable.md">Full write-up</a></p>
+    <h3>Part 3: Plain select switch <span class="tag done">Done</span></h3>
+    <p>The astable and the monostable on one board. A <strong>slide switch</strong> sends one of the two outputs to a yellow LED, which shows the selected clock. The problem is that the clock itself passes through the switch, so its bouncing contacts can add stray pulses.</p>
+    <img src="images/part3-select-switch.png" alt="Part 3 breadboard with two 555 timers and a slide switch" loading="lazy">
+    <p><a href="https://www.tinkercad.com/things/8pzGGpFieEt-bistable-555-timer-8-bit-computer-clock-part-3b">Open in Tinkercad</a> · <a href="https://github.com/MeshanNawod/8-bit-computer/blob/main/docs/clock/03-bistable.md#part-3-plain-select-switch">Full write-up</a></p>
   </div>
 
   <div class="card">
-    <h3>Next: Bistable 555 and logic gates <span class="tag next">Next</span></h3>
-    <p>The toggle switch bounces too, which can add stray clock pulses. The next step adds:</p>
-    <ol class="steps">
-      <li>A third 555 in <strong>bistable</strong> mode that latches the switch position, so bounces do nothing.</li>
-      <li><strong>Logic gates</strong> (74LS04, 74LS08, 74LS32) that pick the clock source and stop it on a <code>HLT</code> instruction.</li>
-    </ol>
-    <div class="formula">CLK = (AUTO · not SEL + MANUAL · SEL) · not HLT</div>
-    <p><a href="https://github.com/MeshanNawod/8-bit-computer/blob/main/docs/clock/04-clock-logic.md">Read the plan</a></p>
-  </div>
-</section>
-
-<section id="pcb">
-  <h2>Printed circuit boards</h2>
-  <p>Each Tinkercad circuit is turned into a real two-layer PCB. The parts and connections are exactly the ones in the Tinkercad export. They were placed neatly, routed with copper traces, and checked with <strong>KiCad's design-rule check: 0 errors, 0 unconnected pads</strong> on all four boards.</p>
-  <div class="card">
-    <div class="pcb-tabs" id="pcbTabs" role="tablist"></div>
-    <div class="layer-toggle">
-      <label><input type="checkbox" id="showTop" checked> Top copper</label>
-      <label><input type="checkbox" id="showBot" checked> Bottom copper</label>
-      <label><input type="checkbox" id="showSilk" checked> Silkscreen</label>
-    </div>
-    <div id="pcbView" class="pcb"></div>
-    <div class="pcb-legend">
-      <span><i style="background:var(--copper-top)"></i>Top copper</span>
-      <span><i style="background:var(--copper-bot)"></i>Bottom copper</span>
-      <span><i style="background:var(--pad)"></i>Pads and vias</span>
-      <span><i style="background:#cfcfcf"></i>Silkscreen</span>
-    </div>
-    <p id="pcbStats" style="color:var(--muted);font-size:.92rem"></p>
-    <div class="renders">
-      <div><img id="renderTop" alt="KiCad render, top side" loading="lazy"><span>KiCad render, top side</span></div>
-      <div><img id="renderBot" alt="KiCad render, bottom side" loading="lazy"><span>KiCad render, bottom side</span></div>
-    </div>
-    <h3 style="margin-top:20px">Parts on this board</h3>
-    <div class="scroll"><table id="pcbParts"></table></div>
-    <p style="margin-top:14px">
-      Download: <a id="dlBrd" href="#">Eagle .brd</a> ·
-      <a id="dlKicad" href="#">KiCad .kicad_pcb</a> ·
-      <a id="dlGerber" href="#">Gerbers + drill (.zip)</a> ·
-      <a id="dlOrig" href="#">original Tinkercad export</a>
-    </p>
-  </div>
-  <div class="card">
-    <h3>Board specs</h3>
+    <h3>Part 3C: Bistable 555 <span class="tag done">Done</span></h3>
+    <p>The fix for the bouncing switch. In <em>bistable</em> mode the 555 is just a flip-flop. The switch grounds either TRIG (output HIGH) or RESET (output LOW), each held high by a 1 kΩ pull-up. The first contact latches the output, and later bounces change nothing.</p>
+    <img src="images/part3c-bistable.png" alt="Part 3C breadboard with a bistable 555" loading="lazy">
     <div class="scroll"><table>
-      <tr><th>Setting</th><th>Value</th><th>Why</th></tr>
-      <tr><td>Layers</td><td>2 (top + bottom)</td><td>Traces can cross by using opposite sides</td></tr>
-      <tr><td>Trace width</td><td>0.4 mm</td><td>Carries well over 1 A; the clock draws about 30 mA</td></tr>
-      <tr><td>Clearance</td><td>0.2 mm</td><td>Within what any cheap PCB maker can produce</td></tr>
-      <tr><td>Via</td><td>0.4 mm drill, 0.8 mm pad</td><td>Used only where a trace must change sides</td></tr>
-      <tr><td>Routing grid</td><td>0.635 mm (25 mil)</td><td>Lets one trace pass between DIP pins (2.54 mm apart)</td></tr>
+      <tr><th>Switch grounds</th><th>TRIG</th><th>RESET</th><th>Output</th></tr>
+      <tr><td>TRIG</td><td>LOW</td><td>HIGH</td><td><strong>HIGH</strong></td></tr>
+      <tr><td>RESET</td><td>HIGH</td><td>LOW</td><td><strong>LOW</strong></td></tr>
+      <tr><td>Nothing (bouncing)</td><td>HIGH</td><td>HIGH</td><td>keeps last value</td></tr>
     </table></div>
+    <p style="margin-top:12px"><a href="https://www.tinkercad.com/things/8nKWwN5A36f-monostable-555-timer-8-bit-computer-clock-part-3c">Open in Tinkercad</a> · <a href="https://github.com/MeshanNawod/8-bit-computer/blob/main/docs/clock/03-bistable.md#part-3c-bistable-555">Full write-up</a></p>
+  </div>
+
+  <div class="card">
+    <h3>Part 3B: All three timers <span class="tag done">Done</span></h3>
+    <p>The astable (red LED), monostable (yellow LED) and bistable (yellow LED) side by side on one breadboard, sharing power. Their outputs are combined in the next step.</p>
+    <img src="images/part3b-three-555.png" alt="Part 3B breadboard with three 555 timers" loading="lazy">
+    <p><a href="https://www.tinkercad.com/things/2x38PAtikeI-bistable-555-timer-8-bit-computer-clock-part-3b">Open in Tinkercad</a> · <a href="https://github.com/MeshanNawod/8-bit-computer/blob/main/docs/clock/03-bistable.md#part-3b-all-three-timers">Full write-up</a></p>
+  </div>
+
+  <div class="card">
+    <h3>Part 4A: Clock logic <span class="tag done">Done</span></h3>
+    <p>Three logic chips (<strong>74HC04</strong> NOT, <strong>74HC08</strong> AND, <strong>74HC32</strong> OR) turn the three timers into one clock. The bistable output SEL picks the source, and a HLT input stops the clock.</p>
+    <img src="images/part4a-clock-logic.png" alt="Part 4A breadboard with three 555 timers and three logic chips" loading="lazy">
+    <div class="formula">CLK = (AST · SEL + MONO · not SEL) · not HLT</div>
+    <div class="scroll"><table>
+      <tr><th>SEL</th><th>HLT</th><th>CLK follows</th></tr>
+      <tr><td>1</td><td>0</td><td>Astable (automatic)</td></tr>
+      <tr><td>0</td><td>0</td><td>Monostable (step button)</td></tr>
+      <tr><td>x</td><td>1</td><td>Nothing: halted, CLK = 0</td></tr>
+    </table></div>
+    <p style="margin-top:12px">A second version adds a HLT toggle switch and a red CLK LED:</p>
+    <img src="images/part4a-clock-logic-halt.png" alt="Part 4A breadboard with a HLT switch and CLK LED" loading="lazy">
+    <p><a href="https://www.tinkercad.com/things/6YHy5r96IyL-clock-logic-8-bit-computer-clock-part-4a">Open in Tinkercad</a> · <a href="https://github.com/MeshanNawod/8-bit-computer/blob/main/docs/clock/04-clock-logic.md">Full write-up</a></p>
   </div>
 </section>
 
@@ -310,9 +272,7 @@
     <ul>
       <li><a href="https://github.com/MeshanNawod/8-bit-computer">GitHub repository</a></li>
       <li><a href="https://github.com/MeshanNawod/8-bit-computer/blob/main/docs/parts-list.md">Parts list</a></li>
-      <li><a href="https://github.com/MeshanNawod/8-bit-computer/tree/main/hardware/pcb">Routed PCB files (.brd)</a> · <a href="https://github.com/MeshanNawod/8-bit-computer/tree/main/hardware/kicad">KiCad files</a> · <a href="https://github.com/MeshanNawod/8-bit-computer/tree/main/hardware/gerbers">Gerbers</a></li>
-      <li><a href="https://github.com/MeshanNawod/8-bit-computer/tree/main/hardware/tinkercad">Original Tinkercad exports (.brd)</a></li>
-      <li><a href="https://github.com/MeshanNawod/8-bit-computer/tree/main/tools">Board generator scripts</a></li>
+      <li><a href="https://github.com/MeshanNawod/8-bit-computer/tree/main/hardware/tinkercad">Tinkercad board files (.brd)</a></li>
     </ul>
   </div>
 </section>

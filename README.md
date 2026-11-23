@@ -1,8 +1,10 @@
 # 8-Bit Breadboard Computer
 
-An 8-bit computer built from logic ICs (74LS series), 555 timers and discrete
-transistors, simulated first in Tinkercad Circuits and documented step by step,
-with the reasoning and calculations behind each part.
+An 8-bit computer built from logic chips, 555 timers and transistors,
+simulated in Tinkercad Circuits and documented step by step, with the
+reasoning and calculations behind each part.
+
+**Website:** <https://meshannawod.github.io/8-bit-computer/>
 
 > **Credit:** This project follows the design of **Ben Eater's 8-bit breadboard
 > computer**. The architecture, module breakdown and most of the circuit ideas
@@ -16,35 +18,28 @@ with the reasoning and calculations behind each part.
 
 ---
 
-## Architecture overview
+## How the computer works
 
-```
-            ┌──────────────────────── 8-bit BUS ────────────────────────┐
-            │                                                            │
- ┌───────┐  │  ┌──────────────┐   ┌──────────────┐   ┌───────────────┐   │
- │ CLOCK │──┼─▶│ Program      │   │ A Register   │──▶│               │   │
- └───────┘  │  │ Counter (PC) │   └──────────────┘   │  ALU (+ / −)  │───┤
-            │  └──────────────┘   ┌──────────────┐   │               │   │
-            │  ┌──────────────┐   │ B Register   │──▶│               │   │
-            ├─▶│ Memory Addr  │   └──────────────┘   └───────────────┘   │
-            │  │ Register     │   ┌──────────────┐   ┌───────────────┐   │
-            │  └──────┬───────┘   │ Instruction  │──▶│ Control Logic │   │
-            │         ▼           │ Register     │   │ (microcode)   │   │
-            │  ┌──────────────┐   └──────────────┘   └───────────────┘   │
-            └─▶│ RAM (16 B)   │   ┌──────────────┐                       │
-               └──────────────┘   │ Output (7seg)│◀──────────────────────┘
-                                  └──────────────┘
-```
+Every module connects to one shared **8-bit bus**. On each clock pulse, the
+control logic lets one module *write* to the bus and one or more modules
+*read* from it.
 
-Every module talks to the others over a shared 8-bit bus. Each clock pulse,
-the control logic enables one module to *write* to the bus and one or more
-modules to *read* from it.
+| Module | Job |
+|--------|-----|
+| Clock | The heartbeat: every step happens on a clock pulse |
+| A and B registers | Hold the two numbers being worked on |
+| ALU | Adds or subtracts A and B |
+| RAM + memory address register | 16 bytes for the program and data |
+| Program counter | Points at the next instruction |
+| Instruction register | Holds the current instruction |
+| Control logic | Decides who uses the bus on each step |
+| Output | Shows a number on 7-segment displays |
 
 ## Build progress
 
-| # | Module | Main ICs | Status | Docs |
-|---|--------|----------|--------|------|
-| 1 | Clock | LM555 ×3, 74LS04, 74LS08, 74LS32 | 🟡 Astable, monostable and select switch simulated; bistable + logic next | [Clock docs](docs/clock/README.md) |
+| # | Module | Main chips | Status | Docs |
+|---|--------|------------|--------|------|
+| 1 | Clock | LM555 ×3, 74HC04, 74HC08, 74HC32 | ✅ Simulated (parts 1A to 4A) | [Clock docs](docs/clock/README.md) |
 | 2 | Registers (A, B, IR) | 74LS173, 74LS245 | ⏳ Planned | — |
 | 3 | ALU (add/subtract) | 74LS283, 74LS86 | ⏳ Planned | — |
 | 4 | RAM + memory address register | 74LS189, 74LS157, 74LS173 | ⏳ Planned | — |
@@ -54,42 +49,22 @@ modules to *read* from it.
 
 ## Module 1: Clock
 
-![Clock module, Part 3 in Tinkercad](images/part3-clock-select.png)
+![Clock module, Part 4A in Tinkercad](images/part4a-clock-logic-halt.png)
 
-The clock is the computer's heartbeat. It has an adjustable free-running
-clock, a debounced single-step button, and a switch to choose between them.
+| Part | What it adds | Key values | Result | Tinkercad | Write-up |
+|------|--------------|-----------|--------|-----------|----------|
+| 1A | Astable 555 | R1 1 kΩ, R2 100 kΩ, C 1 µF | **7.18 Hz** | [Open](https://www.tinkercad.com/things/l30rW27OBnZ-astable-555-timer-8-bit-computer-clock-part-1-a) | [01-astable.md](docs/clock/01-astable.md) |
+| 1B | Speed knob | R2 = 1 kΩ + 1 MΩ pot | **0.72 to 480 Hz** | [Open](https://www.tinkercad.com/things/5Rx0vSOaq2a-astable-555-timer-8-bit-computer-clock-part-1b-) | [01-astable.md](docs/clock/01-astable.md#part-1b-adjustable-speed) |
+| 2A | Monostable 555 | R 1 MΩ, C 0.1 µF | **110 ms** per press | [Open](https://www.tinkercad.com/things/hLZbnoHB4L6-monostable-555-timer-8-bit-computer-clock-part-2a) | [02-monostable.md](docs/clock/02-monostable.md) |
+| 3 | Plain select switch | SPDT between 1B and 2A | auto / manual | [Open](https://www.tinkercad.com/things/8pzGGpFieEt-bistable-555-timer-8-bit-computer-clock-part-3b) | [03-bistable.md](docs/clock/03-bistable.md#part-3-plain-select-switch) |
+| 3C | Bistable 555 | 2 × 1 kΩ pull-ups, SPDT | debounced switch | [Open](https://www.tinkercad.com/things/8nKWwN5A36f-monostable-555-timer-8-bit-computer-clock-part-3c) | [03-bistable.md](docs/clock/03-bistable.md#part-3c-bistable-555) |
+| 3B | All three 555s | 1B + 2A + 3C | three LEDs | [Open](https://www.tinkercad.com/things/2x38PAtikeI-bistable-555-timer-8-bit-computer-clock-part-3b) | [03-bistable.md](docs/clock/03-bistable.md#part-3b-all-three-timers) |
+| 4A | Clock logic | 74HC04, 74HC08, 74HC32 | one CLK signal | [Open](https://www.tinkercad.com/things/6YHy5r96IyL-clock-logic-8-bit-computer-clock-part-4a) | [04-clock-logic.md](docs/clock/04-clock-logic.md) |
 
-| Part | Key values | Result | Tinkercad | Write-up |
-|------|-----------|--------|-----------|----------|
-| 1a: Astable 555 | R1 1 kΩ, R2 100 kΩ, C 1 µF | **7.18 Hz**, 50.2 % duty | [Open](https://www.tinkercad.com/things/l30rW27OBnZ-astable-555-timer-8-bit-computer-clock-part-1-a) | [01-astable.md](docs/clock/01-astable.md) |
-| 1b: Astable + pot | R1 1 kΩ, R2 1 kΩ + 1 MΩ pot, C 1 µF | **0.72 to 480 Hz** | [Open](https://www.tinkercad.com/things/5Rx0vSOaq2a-astable-555-timer-8-bit-computer-clock-part-1b-) | [01-astable.md](docs/clock/01-astable.md#part-1b-adjustable-speed) |
-| 2: Monostable 555 | R 1 MΩ, C 0.1 µF | **110 ms** pulse per press | [Open](https://www.tinkercad.com/things/hLZbnoHB4L6-monostable-555-timer-8-bit-computer-clock-part-2) | [02-monostable.md](docs/clock/02-monostable.md) |
-| 3: Clock select | SPDT switch between 1b and 2 | Auto / manual | [Open](https://www.tinkercad.com/things/8pzGGpFieEt-bistable-555-timer-8-bit-computer-clock-part-3) | [03-bistable.md](docs/clock/03-bistable.md) |
-| 4: Select + halt logic | 74LS04/08/32 | Next step | — | [04-clock-logic.md](docs/clock/04-clock-logic.md) |
+CLK = (AST · SEL + MONO · SEL̅) · HLT̅
 
-All values come from my Tinkercad board exports in
+All values are read from the Tinkercad board exports in
 [`hardware/tinkercad/`](hardware/tinkercad).
-
-## Printed circuit boards
-
-Website with interactive board viewer: <https://meshannawod.github.io/8-bit-computer/#pcb>
-
-Each Tinkercad circuit is also laid out as a real two-layer PCB. The netlist
-(which pads connect) is taken unchanged from the Tinkercad export; the parts are
-placed neatly and the traces are routed by [`tools/make-pcbs.ps1`](tools/make-pcbs.ps1).
-Every board was imported into **KiCad 10** and passes its design-rule check
-with **0 errors and 0 unconnected pads**.
-
-| Board | Size | Vias | Files |
-|-------|------|------|-------|
-| Part 1a: Astable | 46 × 41 mm | 0 | [.brd](hardware/pcb/part1a-astable.brd) · [KiCad](hardware/kicad/part1a-astable.kicad_pcb) · [Gerbers](hardware/gerbers/part1a-astable-gerbers.zip) |
-| Part 1b: Astable + pot | 47 × 41 mm | 0 | [.brd](hardware/pcb/part1b-astable-pot.brd) · [KiCad](hardware/kicad/part1b-astable-pot.kicad_pcb) · [Gerbers](hardware/gerbers/part1b-astable-pot-gerbers.zip) |
-| Part 2: Monostable | 38 × 43 mm | 0 | [.brd](hardware/pcb/part2-monostable.brd) · [KiCad](hardware/kicad/part2-monostable.kicad_pcb) · [Gerbers](hardware/gerbers/part2-monostable-gerbers.zip) |
-| Part 3: Clock select | 84 × 46 mm | 4 | [.brd](hardware/pcb/part3-clock-select.brd) · [KiCad](hardware/kicad/part3-clock-select.kicad_pcb) · [Gerbers](hardware/gerbers/part3-clock-select-gerbers.zip) |
-
-Specs: 0.4 mm traces, 0.2 mm clearance, 0.4/0.8 mm vias, 0.635 mm routing grid.
-
-![Part 3 PCB, KiCad render](images/pcb/part3-clock-select-top.png)
 
 ## Background reading in this repo
 
@@ -98,32 +73,23 @@ Specs: 0.4 mm traces, 0.2 mm clearance, 0.4/0.8 mm vias, 0.635 mm routing grid.
 - [LED current-limiting resistors](docs/basics/led-resistors.md)
 - [Parts list](docs/parts-list.md)
 
-## Repository layout
+## What's in this repository
 
-```
-.
-├── README.md                ← you are here
-├── docs/
-│   ├── basics/              ← 555 internals, transistors, LEDs
-│   ├── clock/               ← Module 1 write-ups and calculations
-│   └── parts-list.md
-├── hardware/
-│   ├── tinkercad/           ← original Eagle .brd exports from Tinkercad (unrouted)
-│   ├── pcb/                 ← routed 2-layer PCBs (same netlist), Eagle .brd
-│   ├── kicad/               ← the same boards as KiCad .kicad_pcb
-│   └── gerbers/             ← Gerber + drill zips, ready to order
-├── tools/                   ← board generator (place + route) and KiCad import script
-├── index.html, site.js      ← the project website (GitHub Pages)
-├── images/                  ← breadboard screenshots
-└── LICENSE
-```
+| Folder or file | Contents |
+|----------------|----------|
+| `docs/clock/` | Write-ups and calculations for each clock part |
+| `docs/basics/` | 555 internals, transistors and gates, LED resistors |
+| `docs/parts-list.md` | Parts list for the clock module |
+| `hardware/tinkercad/` | Eagle `.brd` exports of each Tinkercad circuit |
+| `images/` | Tinkercad breadboard screenshots |
+| `index.html`, `site.js` | The project website (GitHub Pages) |
 
 ## Credits
 
 - **Ben Eater** ([eater.net](https://eater.net), [YouTube](https://www.youtube.com/@BenEater)):
   original 8-bit computer design and video series this project follows.
 - Simulations built in [Autodesk Tinkercad Circuits](https://www.tinkercad.com/circuits).
-- Datasheets: Texas Instruments NE555, SN74LS00-series.
+- Datasheets: Texas Instruments NE555 and 74HC/74LS series.
 
 ## License
 
